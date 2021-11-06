@@ -16,6 +16,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           scaffoldBackgroundColor: Colors.white,
           primarySwatch: Colors.blue,
+          inputDecorationTheme: const InputDecorationTheme(
+            fillColor: Color(0xFFFFFFFF),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFFCCCCCC)),
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+          ),
+          bottomNavigationBarTheme:
+              const BottomNavigationBarThemeData(backgroundColor: Colors.white),
           textTheme: const TextTheme(
               headline1: TextStyle(
                   fontFamily: 'Campton',
