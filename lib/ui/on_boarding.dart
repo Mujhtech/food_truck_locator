@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
-import 'package:food_truck_locator/ui/auth/login.dart';
+import 'package:food_truck_locator/ui/auth/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 
 class OnBoardingScreen extends StatefulWidget {
@@ -45,13 +45,21 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         child: Padding(
           padding: const EdgeInsets.only(left: 10, right: 10),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Align(
                 alignment: Alignment.topRight,
-                child: Text(
-                  'Skip',
-                  style: Theme.of(context).textTheme.bodyText2,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AuthHomeScreen()));
+                  },
+                  child: Text(
+                    'Skip',
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
                 ),
               ),
               SizedBox(
@@ -142,7 +150,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                            builder: (context) => const AuthHomeScreen()));
                   } else {
                     controller.nextPage(
                         duration: const Duration(milliseconds: 1000),
