@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
+import 'package:food_truck_locator/ui/truck/plan.dart';
 import 'package:food_truck_locator/utils/constant.dart';
+import 'package:food_truck_locator/widgets/truck_card.dart';
 
-class ExploreScreen extends StatelessWidget {
-  const ExploreScreen({Key? key}) : super(key: key);
+class TruckScreen extends StatelessWidget {
+  const TruckScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,25 +20,25 @@ class ExploreScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Explore',
+                'My Trucks',
                 style: Theme.of(context)
                     .textTheme
                     .headline1!
                     .copyWith(fontWeight: FontWeight.bold),
               ),
-              
+              const TruckCard(width: 1,),
               Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/images/Map.svg',
+                    SvgPicture.asset('assets/images/NoTruck.svg',
                         color: const Color(0xFFCCCCCC),
                         semanticsLabel: 'Explore'),
                     Text(
-                      'Allow the app to locate your location\nto find the trucks near you',
+                      'There is no information about your\ntruck yet. Start setting up your truck\nright away!',
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyText2,
+                      style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ],
                 ),
@@ -44,7 +46,12 @@ class ExploreScreen extends StatelessWidget {
               Column(
                 children: [
                   MaterialButton(
-                    onPressed: () async {},
+                    onPressed: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const TruckPlan()));
+                    },
                     elevation: 0,
                     color: Commons.primaryColor,
                     shape: RoundedRectangleBorder(
@@ -55,7 +62,7 @@ class ExploreScreen extends StatelessWidget {
                       height: 53,
                       alignment: Alignment.center,
                       child: Text(
-                        'Allow',
+                        'Add New Truck',
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1!

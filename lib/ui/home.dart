@@ -4,8 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/ui/home/cart.dart';
 import 'package:food_truck_locator/ui/home/explore.dart';
+import 'package:food_truck_locator/ui/home/food.dart';
 import 'package:food_truck_locator/ui/home/nearby.dart';
+import 'package:food_truck_locator/ui/home/order.dart';
 import 'package:food_truck_locator/ui/home/profile.dart';
+import 'package:food_truck_locator/ui/home/truck.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -34,9 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final List<Widget> merchant = [
-    const ExploreScreen(),
-    const NearbyScreen(),
-    const CartScreen(),
+    const TruckScreen(),
+    const CuisinesScreen(),
+    const OrderScreen(),
     const ProfileScreen(),
   ];
 
