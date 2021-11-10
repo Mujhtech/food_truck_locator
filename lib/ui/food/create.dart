@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
+import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -242,6 +243,116 @@ class _FoodCreateState extends State<FoodCreate> {
                                 title.text.trim(), description.text.trim())) {
                               return;
                             }
+                            showGeneralDialog(
+                              barrierLabel: "Barrier",
+                              barrierDismissible: true,
+                              barrierColor: Colors.black.withOpacity(0.5),
+                              transitionDuration:
+                                  const Duration(milliseconds: 200),
+                              context: context,
+                              pageBuilder: (_, __, ___) {
+                                return Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    height: 283,
+                                    width: 293,
+                                    child: SizedBox.expand(
+                                        child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: 75,
+                                          width: 75,
+                                          decoration: BoxDecoration(
+                                            color: Commons.primaryColor
+                                                .withOpacity(0.05),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          child: const Icon(
+                                            Icons.check,
+                                            color: Commons.primaryColor,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            'Successful',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline1!
+                                                .copyWith(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            'Your truck has been addedd\nsuccessfully',
+                                            textAlign: TextAlign.center,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1!
+                                                .copyWith(fontSize: 14),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Center(
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const HomeScreen()),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                            },
+                                            child: Text(
+                                              'Return Home',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1!
+                                                  .copyWith(
+                                                      fontSize: 14,
+                                                      color:
+                                                          Commons.primaryColor),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                    margin: const EdgeInsets.only(
+                                        bottom: 50, left: 12, right: 12),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                );
+                              },
+                              transitionBuilder: (_, anim, __, child) {
+                                return SlideTransition(
+                                  position: Tween(
+                                          begin: const Offset(0, 1),
+                                          end: const Offset(0, 0))
+                                      .animate(anim),
+                                  child: child,
+                                );
+                              },
+                            );
                           },
                           elevation: 0,
                           color: Commons.primaryColor,

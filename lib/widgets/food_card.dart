@@ -22,7 +22,7 @@ class FoodCard extends StatelessWidget {
         children: [
           const SizedBox(),
           Container(
-            width: 165,
+            width: 200,
             height: 25,
             decoration: const BoxDecoration(
                 color: Color(0xFFECECFE),

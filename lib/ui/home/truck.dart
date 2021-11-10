@@ -85,7 +85,6 @@ class TruckScreen extends HookWidget {
                   fit: FlexFit.loose,
                   child: ListView.separated(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return InkWell(
                             onTap: () {
@@ -128,6 +127,9 @@ class TruckScreen extends HookWidget {
                 ),
               Column(
                 children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
                   MaterialButton(
                     onPressed: () async {
                       Navigator.push(
@@ -154,7 +156,7 @@ class TruckScreen extends HookWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   )
                 ],
               ),
