@@ -3,8 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
+import 'package:food_truck_locator/ui/event.dart';
 import 'package:food_truck_locator/ui/truck/create.dart';
 import 'package:food_truck_locator/ui/truck/plan.dart';
+import 'package:food_truck_locator/ui/truck/single.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/truck_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,16 +26,88 @@ class TruckScreen extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'My Trucks',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline1!
-                    .copyWith(fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'My Trucks',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const EventScreen()));
+                        },
+                        child: Container(
+                            height: 47,
+                            width: 47,
+                            decoration: const BoxDecoration(
+                                color: Color(0xFFFBFBFB),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            child: const Icon(
+                              Icons.event,
+                              size: 20,
+                              color: Color(0xFF656565),
+                            )),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                            height: 47,
+                            width: 47,
+                            decoration: const BoxDecoration(
+                                color: Color(0xFFFBFBFB),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            child: const Icon(
+                              Icons.search,
+                              size: 20,
+                              color: Color(0xFF656565),
+                            )),
+                      ),
+                    ],
+                  )
+                ],
               ),
               if (truck.trucks != null && truck.trucks!.isNotEmpty)
-                const TruckCard(
-                  width: 1,
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TruckSingle(
+                                            item: truck.trucks![index],
+                                          )));
+                            },
+                            child: TruckCard(
+                              title: truck.trucks![index].title!,
+                              bannerImage: truck.trucks![index].bannerImage!,
+                              width: 1,
+                            ));
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(
+                          height: 20,
+                        );
+                      },
+                      itemCount: truck.trucks!.length),
                 )
               else
                 Center(

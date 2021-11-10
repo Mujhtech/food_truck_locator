@@ -2,24 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 
 class FoodCard extends StatelessWidget {
-  const FoodCard({Key? key}) : super(key: key);
+  final String title;
+  final String bannerImage;
+  const FoodCard({Key? key, required this.bannerImage, required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160,
-      width: 160,
-      decoration: const BoxDecoration(
+      height: 165,
+      width: 165,
+      decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/Food111.png'),
+              image: NetworkImage(bannerImage),
               fit: BoxFit.cover),
-          borderRadius: BorderRadius.all(Radius.circular(10))),
+          borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const SizedBox(),
           Container(
-            width: 160,
+            width: 165,
             height: 25,
             decoration: const BoxDecoration(
                 color: Color(0xFFECECFE),
@@ -28,7 +31,7 @@ class FoodCard extends StatelessWidget {
                     bottomRight: Radius.circular(10))),
             child: Center(
               child: Text(
-                'Fish and Chips',
+                title,
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
                     color: Commons.primaryColor, fontWeight: FontWeight.w600),
               ),

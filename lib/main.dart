@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
             fillColor: Color(0xFFFFFFFF),
             border: OutlineInputBorder(
                 borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
+                borderRadius: BorderRadius.all(Radius.circular(4))),
           ),
           bottomNavigationBarTheme:
               const BottomNavigationBarThemeData(backgroundColor: Colors.white),

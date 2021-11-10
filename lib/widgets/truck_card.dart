@@ -4,18 +4,24 @@ import 'package:food_truck_locator/utils/constant.dart';
 
 class TruckCard extends StatelessWidget {
   final double width;
-  const TruckCard({Key? key, required this.width}) : super(key: key);
+  final String title;
+  final String bannerImage;
+  const TruckCard(
+      {Key? key,
+      required this.width,
+      required this.bannerImage,
+      required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 160,
       width: context.screenWidth(width),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/Truck111.png'),
-              fit: BoxFit.cover),
-          borderRadius: BorderRadius.all(Radius.circular(10))),
+              image: NetworkImage(bannerImage), fit: BoxFit.cover),
+          borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -30,7 +36,7 @@ class TruckCard extends StatelessWidget {
                     bottomRight: Radius.circular(10))),
             child: Center(
               child: Text(
-                'Real Deal Trucks',
+                title,
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
                     color: Commons.primaryColor, fontWeight: FontWeight.w600),
               ),

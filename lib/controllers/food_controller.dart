@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
@@ -42,7 +45,7 @@ class FoodController extends ChangeNotifier {
     }
   }
 
-  Future<bool> create(String title, String description, String location) async {
+  Future<bool> create(String title, String description) async {
     try {
       loading = true;
       notifyListeners();
@@ -64,5 +67,23 @@ class FoodController extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  Future<List<String>> uploadFiles(List<File> _images) async {
+    var imageUrls =
+        await Future.wait(_images.map((_image) => uploadFile(_image)));
+    print(imageUrls);
+    return imageUrls;
+  }
+
+  Future<String> uploadFile(File _image) async {
+    Reference ref =
+        _read(firebaseStorageProvider).ref().child("trucks/" + _image.path);
+    UploadTask uploadTask = ref.putFile(_image);
+    final result = await uploadTask.then((res) async {
+      return await res.ref.getDownloadURL();
+    });
+
+    return result;
   }
 }
