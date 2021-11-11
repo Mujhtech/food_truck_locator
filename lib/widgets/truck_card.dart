@@ -29,16 +29,21 @@ class TruckCard extends StatelessWidget {
           Container(
             width: context.screenWidth(width),
             height: 25,
-            decoration: const BoxDecoration(
-                color: Color(0xFFECECFE),
-                borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+                color: width == 0.5
+                        ? Commons.primaryColor
+                        : const Color(0xFFECECFE),
+                borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(10),
                     bottomRight: Radius.circular(10))),
             child: Center(
               child: Text(
                 title,
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                    color: Commons.primaryColor, fontWeight: FontWeight.w600),
+                    color: width == 0.5
+                        ? Commons.whiteColor
+                        : Commons.primaryColor,
+                    fontWeight: FontWeight.w600),
               ),
             ),
           )

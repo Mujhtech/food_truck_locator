@@ -38,7 +38,7 @@ class TruckScreen extends HookWidget {
                   ),
                   Row(
                     children: [
-                      InkWell(
+                      GestureDetector(
                         onTap: () {
                           Navigator.push(
                               context,
@@ -61,7 +61,7 @@ class TruckScreen extends HookWidget {
                       const SizedBox(
                         width: 10,
                       ),
-                      InkWell(
+                      GestureDetector(
                         onTap: () {},
                         child: Container(
                             height: 47,
@@ -86,7 +86,7 @@ class TruckScreen extends HookWidget {
                   child: ListView.separated(
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        return InkWell(
+                        return GestureDetector(
                             onTap: () {
                               Navigator.push(
                                   context,

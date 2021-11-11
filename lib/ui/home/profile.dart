@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Merchant Mode',
+                            'Merchant/Vendor Mode',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!

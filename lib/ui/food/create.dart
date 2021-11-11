@@ -297,7 +297,7 @@ class _FoodCreateState extends State<FoodCreate> {
                                         ),
                                         Center(
                                           child: Text(
-                                            'Your truck has been addedd\nsuccessfully',
+                                            'Your cuisine has been addedd\nsuccessfully',
                                             textAlign: TextAlign.center,
                                             style: Theme.of(context)
                                                 .textTheme
@@ -309,7 +309,7 @@ class _FoodCreateState extends State<FoodCreate> {
                                           height: 20,
                                         ),
                                         Center(
-                                          child: InkWell(
+                                          child: GestureDetector(
                                             onTap: () {
                                               Navigator.pushAndRemoveUntil(
                                                   context,

@@ -97,7 +97,7 @@ class CuisinesScreen extends HookWidget {
                         mainAxisSpacing: 10,
                       ),
                       itemBuilder: (context, index) {
-                        return InkWell(
+                        return GestureDetector(
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -106,6 +106,7 @@ class CuisinesScreen extends HookWidget {
                                         FoodSingle(item: food.foods![index])));
                           },
                           child: FoodCard(
+                            page: 1,
                             title: food.foods![index].title!,
                             bannerImage: food.foods![index].bannerImage!,
                           ),
@@ -131,6 +132,9 @@ class CuisinesScreen extends HookWidget {
                 ),
               Column(
                 children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
                   MaterialButton(
                     onPressed: () async {
                       Navigator.push(
@@ -157,7 +161,7 @@ class CuisinesScreen extends HookWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   )
                 ],
               ),

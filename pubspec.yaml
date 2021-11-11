@@ -58,6 +58,8 @@ dependencies:
   geolocator: ^7.7.1
   geocode: ^1.0.1
 
+  syncfusion_flutter_calendar: ^19.3.48
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

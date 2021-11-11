@@ -1,14 +1,333 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:food_truck_locator/controllers/food_controller.dart';
+import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
+import 'package:food_truck_locator/ui/food/single.dart';
+import 'package:food_truck_locator/utils/constant.dart';
+import 'package:food_truck_locator/widgets/food_card.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class TruckSingle extends StatelessWidget {
+class TruckSingle extends StatefulWidget {
   final TruckModel item;
   const TruckSingle({Key? key, required this.item}) : super(key: key);
 
   @override
+  State<TruckSingle> createState() => _TruckSingleState();
+}
+
+class _TruckSingleState extends State<TruckSingle>
+    with SingleTickerProviderStateMixin {
+  late TabController _myTab;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _myTab = TabController(vsync: this, length: 2);
+  }
+
+  @override
+  void dispose() {
+    _myTab.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    );
+    return Consumer(builder: (context, watch, _) {
+      final food = watch(foodController);
+      return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          body: Stack(children: [
+            Container(
+                width: context.screenWidth(1),
+                height: 160,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEFEFEF),
+                  image: DecorationImage(
+                      image: NetworkImage(widget.item.bannerImage!),
+                      fit: BoxFit.cover),
+                ),
+                padding: const EdgeInsets.all(50),
+                child: Container()),
+            Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                    //mainAxisSize: MainAxisSize.min,
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100.0),
+                            color: const Color(0xFFFFFFFF),
+                          ),
+                          width: 42,
+                          height: 42,
+                          child: const Center(
+                            child: Icon(
+                              Icons.arrow_back_ios,
+                              size: 20,
+                              color: Color(0xFF656565),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                  color: const Color(0xFFFFFFFF),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF000000)
+                                          .withOpacity(0.05),
+                                      spreadRadius: 0,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 0),
+                                    ),
+                                  ]),
+                              width: 105,
+                              height: 105,
+                              child: SvgPicture.asset(
+                                'assets/images/User.svg',
+                                width: 200,
+                                height: 200,
+                                color: const Color(0xFF656565),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                SizedBox(
+                                  width: 225,
+                                  child: Text(
+                                    widget.item.title!,
+                                    overflow: TextOverflow.visible,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .copyWith(
+                                            color: Commons.primaryColor,
+                                            fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/images/Location.svg',
+                                      width: 20,
+                                      height: 20,
+                                      color: const Color(0xFF656565),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      widget.item.location!,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE0E0E0),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: TabBar(
+                            controller: _myTab,
+                            indicatorColor: Commons.whiteColor,
+                            isScrollable: true,
+                            labelColor: const Color(0xFF000000),
+                            labelStyle: Theme.of(context)
+                                .textTheme
+                                .headline2!
+                                .copyWith(fontSize: 14),
+                            tabs: const [
+                              Tab(
+                                text: 'Details',
+                              ),
+                              Tab(text: 'Cruisine'),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                          child: TabBarView(controller: _myTab, children: [
+                        ListView(
+                          children: [
+                            Text(widget.item.description!,
+                                style: Theme.of(context).textTheme.bodyText1),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text('Contact Us',
+                                style: Theme.of(context).textTheme.bodyText1),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.language,
+                                  size: 20,
+                                  color: Color(0xFF656565),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(widget.item.website!,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(
+                                            color: Commons.primaryColor,
+                                            fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text('Images',
+                                style: Theme.of(context).textTheme.bodyText1),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Column(
+                              children: [
+                                MaterialButton(
+                                  onPressed: () async {},
+                                  elevation: 0,
+                                  color: Commons.primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    width: context.screenWidth(1),
+                                    height: 53,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'I want to find you',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(color: Commons.whiteColor),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                MaterialButton(
+                                  onPressed: () async {},
+                                  elevation: 0,
+                                  color: Commons.primaryColor.withOpacity(0.1),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    width: context.screenWidth(1),
+                                    height: 53,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Find Food Truck in my street',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                              color: Commons.primaryColor),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        if (food.foods != null && food.foods!.isNotEmpty)
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                fit: FlexFit.loose,
+                                child: GridView.builder(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 10.0, top: 5.0),
+                                    itemCount: food.foods!.length,
+                                    scrollDirection: Axis.vertical,
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      childAspectRatio: (1 / 1.1),
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 10,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => FoodSingle(
+                                                      item: food.foods![index])));
+                                        },
+                                        child: FoodCard(
+                                          page: 2,
+                                          title: food.foods![index].title!,
+                                          bannerImage:
+                                              food.foods![index].bannerImage!,
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ],
+                          )
+                        else
+                          ListView()
+                      ]))
+                    ]))
+          ]));
+    });
   }
 }
