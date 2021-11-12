@@ -6,9 +6,12 @@ import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
 import 'package:food_truck_locator/ui/food/single.dart';
+import 'package:food_truck_locator/ui/home.dart';
+import 'package:food_truck_locator/ui/truck/look_up.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/food_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TruckSingle extends StatefulWidget {
   final TruckModel item;
@@ -204,25 +207,34 @@ class _TruckSingleState extends State<TruckSingle>
                             const SizedBox(
                               height: 10,
                             ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.language,
-                                  size: 20,
-                                  color: Color(0xFF656565),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(widget.item.website!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(
-                                            color: Commons.primaryColor,
-                                            fontWeight: FontWeight.w600)),
-                              ],
+                            GestureDetector(
+                              onTap: () async {
+                                if (await canLaunch(widget.item.website!)) {
+                                  await launch(widget.item.website!);
+                                } else {
+                                  throw 'Could not launch the url';
+                                }
+                              },
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.language,
+                                    size: 20,
+                                    color: Color(0xFF656565),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(widget.item.website!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                              color: Commons.primaryColor,
+                                              fontWeight: FontWeight.w600)),
+                                ],
+                              ),
                             ),
                             const SizedBox(
                               height: 10,
@@ -238,7 +250,13 @@ class _TruckSingleState extends State<TruckSingle>
                             Column(
                               children: [
                                 MaterialButton(
-                                  onPressed: () async {},
+                                  onPressed: () async {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                TruckLookUp(item: widget.item)));
+                                  },
                                   elevation: 0,
                                   color: Commons.primaryColor,
                                   shape: RoundedRectangleBorder(
@@ -261,7 +279,14 @@ class _TruckSingleState extends State<TruckSingle>
                                   height: 10,
                                 ),
                                 MaterialButton(
-                                  onPressed: () async {},
+                                  onPressed: () async {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const HomeScreen()),
+                                        (Route<dynamic> route) => false);
+                                  },
                                   elevation: 0,
                                   color: Commons.primaryColor.withOpacity(0.1),
                                   shape: RoundedRectangleBorder(
@@ -309,8 +334,10 @@ class _TruckSingleState extends State<TruckSingle>
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) => FoodSingle(
-                                                      item: food.foods![index])));
+                                                  builder: (context) =>
+                                                      FoodSingle(
+                                                          item: food
+                                                              .foods![index])));
                                         },
                                         child: FoodCard(
                                           page: 2,
