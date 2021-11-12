@@ -6,6 +6,7 @@ class FoodModel {
   String? featuredImage;
   String? bannerImage;
   String? truckId;
+  int? amount;
 
   FoodModel({
     this.id,
@@ -15,6 +16,7 @@ class FoodModel {
     this.featuredImage,
     this.truckId,
     this.title,
+    this.amount
   });
 
   factory FoodModel.fromJson(Map<String, dynamic> json) {
@@ -25,7 +27,8 @@ class FoodModel {
         truckId: json['truck_id'],
         description: json['description'],
         featuredImage: json['featured_image'],
-        bannerImage: json['banner_image']);
+        bannerImage: json['banner_image'],
+        amount: json['amount']);
   }
 
   factory FoodModel.fromDocument(doc) {
@@ -42,6 +45,7 @@ class FoodModel {
     data['description'] = description;
     data['featured_image'] = featuredImage;
     data['banner_image'] = bannerImage;
+    data['amount'] = amount;
     return data;
   }
 

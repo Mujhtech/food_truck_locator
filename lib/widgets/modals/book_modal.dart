@@ -3,7 +3,9 @@ import 'package:flutter/rendering.dart';
 import 'package:food_truck_locator/controllers/share_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
+import 'package:food_truck_locator/ui/book.dart';
 import 'package:food_truck_locator/ui/home.dart';
+import 'package:food_truck_locator/ui/reservation.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -159,7 +161,14 @@ class _BookModalState extends State<BookModal> {
                   Column(
                     children: [
                       MaterialButton(
-                        onPressed: () async {},
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BookingScreen(
+                                        item: widget.item,
+                                      )));
+                        },
                         elevation: 0,
                         color: Commons.primaryColor,
                         shape: RoundedRectangleBorder(
@@ -182,7 +191,14 @@ class _BookModalState extends State<BookModal> {
                         height: 10,
                       ),
                       MaterialButton(
-                        onPressed: () async {},
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ReservationScreen(
+                                        item: widget.item,
+                                      )));
+                        },
                         elevation: 0,
                         color: Commons.primaryColor.withOpacity(0.1),
                         shape: RoundedRectangleBorder(
