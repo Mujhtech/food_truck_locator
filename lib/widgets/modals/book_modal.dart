@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:food_truck_locator/controllers/share_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
 import 'package:food_truck_locator/ui/book.dart';
-import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/ui/reservation.dart';
 import 'package:food_truck_locator/utils/constant.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BookModal extends StatefulWidget {

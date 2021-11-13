@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:food_truck_locator/controllers/share_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/food_model.dart';
@@ -95,8 +96,8 @@ class _OrderModalState extends State<OrderModal> {
                     left: 10, right: 10, bottom: 20, top: 20),
                 width: context.screenWidth(1),
                 color: Theme.of(context).scaffoldBackgroundColor,
-                child: ListView(
-                  shrinkWrap: true,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Center(
                       child: Text(
@@ -105,9 +106,6 @@ class _OrderModalState extends State<OrderModal> {
                             color: Commons.primaryColor,
                             fontWeight: FontWeight.w700),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 20,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -175,18 +173,19 @@ class _OrderModalState extends State<OrderModal> {
                         )
                       ],
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      'Special Request',
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(
+                          'Special Request',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         TextFormField(
                           controller: specialRequest,
                           cursorColor: Commons.primaryColor,

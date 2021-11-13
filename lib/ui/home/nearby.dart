@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
-import 'package:food_truck_locator/ui/truck/single.dart';
-import 'package:food_truck_locator/widgets/truck_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NearbyScreen extends StatelessWidget {

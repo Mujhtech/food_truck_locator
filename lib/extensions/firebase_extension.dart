@@ -6,4 +6,5 @@ extension FirebaseFirestoreX on FirebaseFirestore {
   CollectionReference food() => collection('foods');
   CollectionReference order() => collection('orders');
   CollectionReference cart() => collection('carts');
+  CollectionReference appointment() => collection('appointments');
 }

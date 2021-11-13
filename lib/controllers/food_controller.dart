@@ -72,7 +72,7 @@ class FoodController extends ChangeNotifier {
   Future<List<String>> uploadFiles(List<File> _images) async {
     var imageUrls =
         await Future.wait(_images.map((_image) => uploadFile(_image)));
-    print(imageUrls);
+    //print(imageUrls);
     return imageUrls;
   }
 

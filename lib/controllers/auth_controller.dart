@@ -258,4 +258,6 @@ class AuthController extends ChangeNotifier {
       return false;
     }
   }
+
+  
 }
