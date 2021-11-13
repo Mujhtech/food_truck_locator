@@ -4,8 +4,10 @@ import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/truck/single.dart';
 import 'package:food_truck_locator/utils/constant.dart';
+import 'package:food_truck_locator/widgets/modals/search_modal.dart';
 import 'package:food_truck_locator/widgets/truck_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({Key? key}) : super(key: key);
@@ -40,7 +42,11 @@ class ExploreScreen extends StatelessWidget {
                       ],
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () => showCupertinoModalBottomSheet(
+                          elevation: 0,
+                          expand: true,
+                          context: context,
+                          builder: (context) => const SearchModal()),
                       child: Container(
                           height: 47,
                           width: 47,
@@ -109,33 +115,6 @@ class ExploreScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                Column(
-                  children: [
-                    MaterialButton(
-                      onPressed: () async {},
-                      elevation: 0,
-                      color: Commons.primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Container(
-                        width: context.screenWidth(1),
-                        height: 53,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Allow',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(color: Commons.whiteColor),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    )
-                  ],
-                ),
               ],
             ),
           ),

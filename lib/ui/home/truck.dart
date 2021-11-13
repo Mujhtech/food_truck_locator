@@ -8,8 +8,10 @@ import 'package:food_truck_locator/ui/truck/create.dart';
 import 'package:food_truck_locator/ui/truck/plan.dart';
 import 'package:food_truck_locator/ui/truck/single.dart';
 import 'package:food_truck_locator/utils/constant.dart';
+import 'package:food_truck_locator/widgets/modals/search_modal.dart';
 import 'package:food_truck_locator/widgets/truck_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class TruckScreen extends HookWidget {
   const TruckScreen({Key? key}) : super(key: key);
@@ -62,7 +64,11 @@ class TruckScreen extends HookWidget {
                         width: 10,
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () => showCupertinoModalBottomSheet(
+                          elevation: 0,
+                          expand: true,
+                          context: context,
+                          builder: (context) => const SearchModal()),
                         child: Container(
                             height: 47,
                             width: 47,

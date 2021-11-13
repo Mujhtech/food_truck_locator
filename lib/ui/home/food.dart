@@ -8,7 +8,9 @@ import 'package:food_truck_locator/ui/food/create.dart';
 import 'package:food_truck_locator/ui/food/single.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/food_card.dart';
+import 'package:food_truck_locator/widgets/modals/search_modal.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class CuisinesScreen extends HookWidget {
   const CuisinesScreen({Key? key}) : super(key: key);
@@ -60,8 +62,12 @@ class CuisinesScreen extends HookWidget {
                       const SizedBox(
                         width: 10,
                       ),
-                      InkWell(
-                        onTap: () {},
+                      GestureDetector(
+                        onTap: () => showCupertinoModalBottomSheet(
+                            elevation: 0,
+                            expand: true,
+                            context: context,
+                            builder: (context) => const SearchModal()),
                         child: Container(
                             height: 47,
                             width: 47,
