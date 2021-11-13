@@ -14,6 +14,7 @@ class ShareController extends ChangeNotifier {
   final Reader _read;
   final SharedPreferences? sharedPreferences;
   static const String cart = "cart";
+  static const String mapPermission = "map_permission";
   List? carts;
 
   ShareController(this._read, this.sharedPreferences);
@@ -41,5 +42,14 @@ class ShareController extends ChangeNotifier {
 
   String? getCart() {
     return sharedPreferences!.getString(cart) ?? '';
+  }
+
+  Future<void> updateMapPermission(bool value) async {
+    await _read(sharedUtilityProvider).setMapPermission(value);
+    notifyListeners();
+  }
+
+  bool? getMapPermission() {
+    return sharedPreferences!.getBool(mapPermission) ?? false;
   }
 }

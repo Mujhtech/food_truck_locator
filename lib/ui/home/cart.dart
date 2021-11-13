@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
+import 'package:food_truck_locator/ui/checkout.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/cart_card.dart';
 
@@ -69,7 +70,12 @@ class CartScreen extends StatelessWidget {
                       ],
                     ),
                     MaterialButton(
-                      onPressed: () async {},
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CheckoutScreen()));
+                      },
                       elevation: 0,
                       color: Commons.primaryColor,
                       shape: RoundedRectangleBorder(

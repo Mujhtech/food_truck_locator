@@ -15,8 +15,13 @@ class SharedUtility {
   });
   final SharedPreferences? sharedPreferences;
   static const String cart = "cart";
+  static const String mapPermission = "map_permission";
 
   Future<bool> setCart(String value) async {
     return await sharedPreferences!.setString(cart, value);
+  }
+
+  Future<bool> setMapPermission(bool value) async {
+    return await sharedPreferences!.setBool(mapPermission, value);
   }
 }

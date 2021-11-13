@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/repositories/share_repository.dart';
 import 'package:food_truck_locator/ui/splash.dart';
+import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Food Truck Locator',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+          unselectedWidgetColor: Commons.primaryColor,
           scaffoldBackgroundColor: Colors.white,
           primarySwatch: Colors.blue,
           inputDecorationTheme: const InputDecorationTheme(

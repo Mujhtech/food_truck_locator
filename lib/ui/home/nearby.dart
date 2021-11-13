@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:food_truck_locator/controllers/share_controller.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/utils/constant.dart';
@@ -77,9 +78,10 @@ class _NearbyScreenState extends State<NearbyScreen> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final truck = watch(truckController);
+      final share = watch(shareControllerProvider);
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: mapPermission
+        body: share.getMapPermission()!
             ? Container(
                 width: context.screenWidth(1),
                 height: context.screenHeight(1),
@@ -124,7 +126,8 @@ class _NearbyScreenState extends State<NearbyScreen> {
                           children: [
                             MaterialButton(
                               onPressed: () async {
-                                await _requestMapPermission();
+                                final result = await _requestMapPermission();
+                                await share.updateMapPermission(result);
                               },
                               elevation: 0,
                               color: Commons.primaryColor,
