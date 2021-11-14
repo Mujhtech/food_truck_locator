@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
@@ -27,7 +28,7 @@ class FoodSingle extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFFEFEFEF),
                   image: DecorationImage(
-                      image: NetworkImage(item.bannerImage!),
+                      image: CachedNetworkImageProvider(item.bannerImage!),
                       fit: BoxFit.cover),
                 ),
                 padding: const EdgeInsets.all(50),

@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/user_profile_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   const ProfileEditScreen({Key? key}) : super(key: key);
@@ -18,6 +21,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   TextEditingController address = TextEditingController();
   TextEditingController phone = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
@@ -60,10 +64,211 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       children: [
                         Center(
                           child: InkWell(
-                              onTap: () {},
-                              child: UserProfileImage(
-                                radius: 138,
-                                image: auth.user!.profileImage,
+                              onTap: () {
+                                showGeneralDialog(
+                                  barrierLabel: "Barrier",
+                                  barrierDismissible: true,
+                                  barrierColor: Colors.black.withOpacity(0.5),
+                                  transitionDuration:
+                                      const Duration(milliseconds: 200),
+                                  context: context,
+                                  pageBuilder: (_, __, ___) {
+                                    return Align(
+                                      alignment: Alignment.center,
+                                      child: Container(
+                                        height: 283,
+                                        width: 293,
+                                        child: SizedBox.expand(
+                                            child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              height: 75,
+                                              width: 75,
+                                              decoration: BoxDecoration(
+                                                color: Commons.primaryColor
+                                                    .withOpacity(0.05),
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                              ),
+                                              child: const Icon(
+                                                Icons.photo_camera,
+                                                color: Commons.primaryColor,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Center(
+                                              child: Text(
+                                                'Change profile picture',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline1!
+                                                    .copyWith(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            if (auth.loading)
+                                              const SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child: CircularProgressIndicator(
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            Commons
+                                                                .primaryColor)),
+                                              )
+                                            else
+                                              Column(
+                                                children: [
+                                                  Center(
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        if (!await Commons
+                                                            .checkStoragePermission()) {
+                                                          if (!await Commons
+                                                              .requestStoragePermission()) {
+                                                            return;
+                                                          }
+                                                        }
+                                                        try {
+                                                          final XFile? image =
+                                                              await _picker.pickImage(
+                                                                  source: ImageSource
+                                                                      .gallery);
+                                                          if (image!.name
+                                                                  .isNotEmpty &&
+                                                              await auth
+                                                                  .uploadProfileImage(
+                                                                      File(image
+                                                                          .path))) {
+                                                            return;
+                                                          } else {
+                                                            return;
+                                                          }
+                                                        } catch (err) {
+                                                          //print(err.toString());
+                                                        }
+                                                      },
+                                                      child: Text(
+                                                        'Choose from gallery',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1!
+                                                            .copyWith(
+                                                                fontSize: 14),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Center(
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        if (!await Commons
+                                                            .checkCameraPermission()) {
+                                                          if (!await Commons
+                                                              .requestCameraPermission()) {
+                                                            return;
+                                                          }
+                                                        }
+                                                        try {
+                                                          final XFile? image =
+                                                              await _picker.pickImage(
+                                                                  source:
+                                                                      ImageSource
+                                                                          .camera);
+                                                          if (image!.name
+                                                                  .isNotEmpty &&
+                                                              await auth
+                                                                  .uploadProfileImage(
+                                                                      File(image
+                                                                          .path))) {
+                                                            return;
+                                                          } else {
+                                                            return;
+                                                          }
+                                                        } catch (err) {
+                                                          //print(err.toString());
+                                                        }
+                                                      },
+                                                      child: Text(
+                                                        'Choose from camera',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1!
+                                                            .copyWith(
+                                                                fontSize: 14),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                          ],
+                                        )),
+                                        margin: const EdgeInsets.only(
+                                            bottom: 50, left: 12, right: 12),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .scaffoldBackgroundColor,
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  transitionBuilder: (_, anim, __, child) {
+                                    return SlideTransition(
+                                      position: Tween(
+                                              begin: const Offset(0, 1),
+                                              end: const Offset(0, 0))
+                                          .animate(anim),
+                                      child: child,
+                                    );
+                                  },
+                                );
+                              },
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: UserProfileImage(
+                                      radius: 138,
+                                      image: auth.user!.profileImage,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 100,
+                                    top: 100,
+                                    child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        color: Commons.whiteColor,
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                      child: const Icon(
+                                        Icons.photo_camera,
+                                        color: Color(0xFF656565),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               )),
                         ),
                         const SizedBox(

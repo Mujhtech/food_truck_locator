@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:food_truck_locator/controllers/share_controller.dart';
+import 'package:food_truck_locator/controllers/cart_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/food_model.dart';
 import 'package:food_truck_locator/ui/home.dart';
@@ -23,7 +23,7 @@ class _OrderModalState extends State<OrderModal> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
-      final share = watch(shareControllerProvider);
+      final share = watch(cartController);
       return Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
@@ -228,6 +228,7 @@ class _OrderModalState extends State<OrderModal> {
                     ),
                     MaterialButton(
                       onPressed: () async {
+                        await share.add(widget.item, cart);
                         showGeneralDialog(
                           barrierLabel: "Barrier",
                           barrierDismissible: true,

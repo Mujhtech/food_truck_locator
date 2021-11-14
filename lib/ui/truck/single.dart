@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
@@ -54,7 +55,8 @@ class _TruckSingleState extends State<TruckSingle>
                 decoration: BoxDecoration(
                   color: const Color(0xFFEFEFEF),
                   image: DecorationImage(
-                      image: NetworkImage(widget.item.bannerImage!),
+                      image:
+                          CachedNetworkImageProvider(widget.item.bannerImage!),
                       fit: BoxFit.cover),
                 ),
                 padding: const EdgeInsets.all(50),

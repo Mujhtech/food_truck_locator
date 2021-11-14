@@ -38,46 +38,67 @@ class _CartScreenState extends State<CartScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Commons.primaryColor.withOpacity(0.1),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.shopping_cart,
-                          size: 24, color: Commons.primaryColor),
-                      const SizedBox(
-                        width: 10,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      color: Commons.primaryColor.withOpacity(0.1),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.shopping_cart,
+                              size: 24, color: Commons.primaryColor),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text('Arrives in 24 Hours',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                      color: Commons.primaryColor,
+                                      fontWeight: FontWeight.w600)),
+                        ],
                       ),
-                      Text('Arrives in 24 Hours',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(
-                                  color: Commons.primaryColor,
-                                  fontWeight: FontWeight.w600)),
-                    ],
-                  ),
-                ),
-                if (cart.carts!.data.isNotEmpty)
-                  const CartCard()
-                else
-                  Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.shopping_cart,
-                            size: 50, color: Color(0xFFCCCCCC)),
-                        Text(
-                          'Cart is empty',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
-                      ],
                     ),
-                  ),
+                    if (cart.carts != null && cart.carts!.data.isNotEmpty)
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: ListView.separated(
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return CartCard(
+                                item: cart.carts!.data[index],
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return const SizedBox(
+                                height: 20,
+                              );
+                            },
+                            itemCount: cart.carts!.data.length),
+                      )
+                    else
+                      Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.shopping_cart,
+                                size: 50, color: Color(0xFFCCCCCC)),
+                            Text(
+                              'Cart is empty',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyText2,
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Row(
@@ -91,7 +112,8 @@ class _CartScreenState extends State<CartScreen> {
                                   .textTheme
                                   .bodyText2!
                                   .copyWith(fontSize: 12)),
-                          Text('USD150.00',
+                          Text(
+                              '${Commons.getTotalAmout(cart.carts != null ? cart.carts!.data : [])}USD',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
@@ -100,6 +122,9 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       MaterialButton(
                         onPressed: () async {
+                          if (cart.carts == null || cart.carts!.data.isEmpty) {
+                            return;
+                          }
                           Navigator.push(
                               context,
                               MaterialPageRoute(

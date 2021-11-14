@@ -53,6 +53,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: Theme.of(context).textTheme.headline1!.copyWith(
                             fontWeight: FontWeight.w900, fontSize: 32)),
                     const SizedBox(
+                      height: 10,
+                    ),
+                    if (auth.user!.address != null)
+                      Text(auth.user!.address!,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(
+                                  color: Commons.primaryColor,
+                                  fontWeight: FontWeight.w600)),
+                    const SizedBox(
                       height: 20,
                     ),
                     Container(

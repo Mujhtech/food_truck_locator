@@ -21,25 +21,42 @@ class CartController extends ChangeNotifier {
     retrieve();
   }
 
-  void retrieve() {
+  Future<void> retrieve() async {
     final data = _read(sharedUtilityProvider).loadSharedCartData();
     _carts = data;
     notifyListeners();
   }
 
-  void saveData() {
+  Future<void> saveData() async {
     _read(sharedUtilityProvider).saveSharedCartData(_carts!);
   }
 
-  void add(FoodModel item, int qty) {
-    _carts = ListOfCartModel(data: [
-      ..._carts!.data,
-      CartModel(id: item.id, item: item, qty: qty),
-    ]);
-    saveData();
+  Future<bool> add(FoodModel item, int qty) async {
+    if (_carts!.data.isEmpty) {
+      _carts = ListOfCartModel(data: [
+        ..._carts!.data,
+        CartModel(qty: qty, id: item.id, item: item)
+      ]);
+      saveData();
+      notifyListeners();
+      return true;
+    }
+    for (final cart in _carts!.data) {
+      if (cart.id == item.id) {
+        await edit(item: item, qty: qty);
+      } else {
+        _carts = ListOfCartModel(data: [
+          ..._carts!.data,
+          CartModel(qty: qty, id: item.id, item: item)
+        ]);
+        saveData();
+        notifyListeners();
+      }
+    }
+    return true;
   }
 
-  void edit({required FoodModel item, required int qty}) {
+  Future<void> edit({required FoodModel item, required int qty}) async {
     _carts = ListOfCartModel(data: [
       for (final cart in _carts!.data)
         if (cart.id == item.id)
@@ -48,12 +65,14 @@ class CartController extends ChangeNotifier {
           cart,
     ]);
     saveData();
+    notifyListeners();
   }
 
-  void remove(FoodModel item) {
+  Future<void> remove(FoodModel item) async {
     _carts = ListOfCartModel(
         data: _carts!.data.where((cart) => cart.id != item.id).toList());
 
     saveData();
+    notifyListeners();
   }
 }

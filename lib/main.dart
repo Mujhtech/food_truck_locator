@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
       title: 'Food Truck Locator',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          splashColor: Commons.primaryColor,
-          highlightColor: Commons.primaryColor,
+          //splashColor: Commons.primaryColor,
+          //highlightColor: Commons.primaryColor,
           unselectedWidgetColor: Commons.primaryColor,
           scaffoldBackgroundColor: Colors.white,
           primarySwatch: Colors.blue,

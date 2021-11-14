@@ -12,7 +12,10 @@ class CartModel {
   });
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
-    return CartModel(id: json['id'], item: json['item'], qty: json['qty']);
+    return CartModel(
+        id: json['id'],
+        item: json['item'],
+        qty: json['qty']);
   }
 
   factory CartModel.fromDocument(doc) {
