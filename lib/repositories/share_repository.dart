@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:food_truck_locator/models/list_of_cart_model.dart';
+import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,5 +27,26 @@ class SharedUtility {
 
   Future<bool> setMapPermission(bool value) async {
     return await sharedPreferences!.setBool(mapPermission, value);
+  }
+
+  ListOfCartModel loadSharedCartData() {
+    Map<String, dynamic> decodeOptions = jsonDecode(
+        sharedPreferences!.getString(Commons.sharedPrefCartListKey) ??
+            Commons.emptyJsonStringData);
+    ListOfCartModel listOfTodoModel = ListOfCartModel.fromJson(decodeOptions);
+    return listOfTodoModel;
+  }
+
+  void saveSharedCartData(ListOfCartModel listOfCartModel) {
+    if (listOfCartModel.data.isNotEmpty) {
+      Map<String, dynamic> decodeOptions = listOfCartModel.toJson();
+      String sharedData = jsonEncode(
+        ListOfCartModel.fromJson(decodeOptions),
+      );
+      sharedPreferences!.setString(Commons.sharedPrefCartListKey, sharedData);
+    } else {
+      sharedPreferences!.setString(
+          Commons.sharedPrefCartListKey, Commons.emptyJsonStringData);
+    }
   }
 }

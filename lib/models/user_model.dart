@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   String? uid;
   String? fullName;
@@ -8,6 +10,9 @@ class UserModel {
   String? profileImage;
   String? address;
   DateTime? lastLoggedIn;
+  DateTime? planExpiredDate;
+  DateTime? planStartDate;
+  String? planName;
 
   UserModel(
       {this.email,
@@ -18,7 +23,10 @@ class UserModel {
       this.accountType,
       this.profileImage,
       this.address,
-      this.lastLoggedIn});
+      this.lastLoggedIn,
+      this.planExpiredDate,
+      this.planName,
+      this.planStartDate});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -30,6 +38,9 @@ class UserModel {
         password: json['password'],
         address: json['contact_address'],
         profileImage: json['profile_picture'],
+        planName: json['plan_name'],
+        planExpiredDate: (json['plan_expired_date'] as Timestamp).toDate(),
+        planStartDate: (json['plan_start_date'] as Timestamp).toDate(),
         lastLoggedIn: json['last_logged_in'] ?? DateTime.now());
   }
 
@@ -49,6 +60,9 @@ class UserModel {
     data['contact_address'] = address;
     data['profile_picture'] = profileImage;
     data['last_logged_in'] = lastLoggedIn;
+    data['plan_start_date'] = planStartDate;
+    data['plan_expired_date'] = planExpiredDate;
+    data['plan_name'] = planName;
     return data;
   }
 }

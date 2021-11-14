@@ -65,7 +65,8 @@ class _OrderModalState extends State<OrderModal> {
                             topLeft: Radius.circular(16),
                             topRight: Radius.circular(16)),
                         image: DecorationImage(
-                          image: CachedNetworkImageProvider(widget.item.bannerImage!),
+                          image: CachedNetworkImageProvider(
+                              widget.item.bannerImage!),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -227,7 +228,6 @@ class _OrderModalState extends State<OrderModal> {
                     ),
                     MaterialButton(
                       onPressed: () async {
-                        await share.addToCart(cart, widget.item);
                         showGeneralDialog(
                           barrierLabel: "Barrier",
                           barrierDismissible: true,
