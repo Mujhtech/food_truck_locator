@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:food_truck_locator/controllers/appointment_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
@@ -119,6 +120,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             }
                           },
                           controller: number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp('[0-9.,]+')),
+                            LengthLimitingTextInputFormatter(11),
+                          ],
                           cursorColor: Commons.primaryColor,
                           keyboardType: TextInputType.number,
                           style: Theme.of(context)
@@ -382,9 +388,16 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         information.text.trim(),
                         int.parse(number.text.trim()),
                         widget.item.id!,
-                        widget.item.userId!)) {
+                        widget.item.userId!,
+                        2)) {
                       return;
                     }
+                    fulladdress.text = '';
+                    email.text = '';
+                    phoneNumber.text = '';
+                    fullname.text = '';
+                    information.text = '';
+                    number.text = '';
                     showGeneralDialog(
                       barrierLabel: "Barrier",
                       barrierDismissible: true,
@@ -434,7 +447,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 ),
                                 Center(
                                   child: Text(
-                                    'Our truck will be with you shortly',
+                                    'Your order is reserved. we will get\nback to you shortly.',
                                     textAlign: TextAlign.center,
                                     style: Theme.of(context)
                                         .textTheme

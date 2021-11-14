@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
+import 'package:food_truck_locator/models/food_model.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class FoodEdit extends StatefulWidget {
-  const FoodEdit({Key? key}) : super(key: key);
+  final FoodModel item;
+  const FoodEdit({Key? key, required this.item}) : super(key: key);
 
   @override
   State<FoodEdit> createState() => _FoodEditState();

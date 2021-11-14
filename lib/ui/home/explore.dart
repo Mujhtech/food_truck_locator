@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
-import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/truck/single.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/modals/search_modal.dart';

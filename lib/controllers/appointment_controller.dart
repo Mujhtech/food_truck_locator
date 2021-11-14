@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
 import 'package:food_truck_locator/models/appointment_model.dart';
+import 'package:food_truck_locator/models/meeting_model.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/appointment_repository.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
@@ -18,9 +19,11 @@ class AppointmentController extends ChangeNotifier {
   final String? _userId;
   String? error;
   List<AppointMentModel>? _appointments;
+  List<MeetingModel>? _meetings;
   bool loading = false;
 
   List<AppointMentModel>? get appointments => _appointments;
+  List<MeetingModel>? get meetings => _meetings;
 
   AppointmentController(this._read, this._userId) {
     if (_userId != null) {
@@ -32,8 +35,25 @@ class AppointmentController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
+      List<MeetingModel> datas = [];
       final items =
           await _read(appointmentRepositoryProvider).get(userId: _userId!);
+      for (final i in items) {
+        datas.add(MeetingModel(
+            i.id!,
+            i.type! == 1 ? 'Booking' : 'Reservation',
+            i.date!,
+            i.date!,
+            i.type! == 1 ? const Color(0xFF443DF6) : Colors.black,
+            false,
+            i.information!,
+            i.address!,
+            i.number!,
+            i.fullname!,
+            i.phoneNumber!,
+            i.email!));
+      }
+      _meetings = datas;
       _appointments = items;
       loading = false;
       notifyListeners();
@@ -53,7 +73,8 @@ class AppointmentController extends ChangeNotifier {
       String information,
       int number,
       String truckId,
-      String truckOwnerId) async {
+      String truckOwnerId,
+      int type) async {
     try {
       loading = true;
       notifyListeners();
@@ -61,6 +82,7 @@ class AppointmentController extends ChangeNotifier {
           _read(firebaseFirestoreProvider).appointment().doc().id.toString();
       AppointMentModel item = AppointMentModel(
           id: id,
+          type: type,
           fullname: fullname,
           phoneNumber: phoneNumber,
           email: email,

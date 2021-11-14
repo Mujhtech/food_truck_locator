@@ -163,6 +163,7 @@ class _TruckLookUpState extends State<TruckLookUp> {
                           onPressed: () => showCupertinoModalBottomSheet(
                             elevation: 0,
                             expand: true,
+                            shadow: const BoxShadow(color: Colors.transparent),
                             backgroundColor: Colors.transparent,
                             transitionBackgroundColor: Colors.transparent,
                             context: context,

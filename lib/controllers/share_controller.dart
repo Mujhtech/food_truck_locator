@@ -31,7 +31,7 @@ class ShareController extends ChangeNotifier {
       //await _read(sharedUtilityProvider).setCart(jsonEncode(encodeData));
       //print(data.add(food));
     } else {
-      print(0);
+      //print(0);
     }
   }
 

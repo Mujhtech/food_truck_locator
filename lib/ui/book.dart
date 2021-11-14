@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:food_truck_locator/controllers/appointment_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
@@ -115,6 +116,10 @@ class _BookingScreenState extends State<BookingScreen> {
                           }
                         },
                         controller: number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp('[0-9.,]+')),
+                          LengthLimitingTextInputFormatter(11),
+                        ],
                         cursorColor: Commons.primaryColor,
                         keyboardType: TextInputType.number,
                         style: Theme.of(context)
@@ -337,9 +342,16 @@ class _BookingScreenState extends State<BookingScreen> {
                         information.text.trim(),
                         int.parse(number.text.trim()),
                         widget.item.id!,
-                        widget.item.userId!)) {
+                        widget.item.userId!,
+                        1)) {
                       return;
                     }
+                    fulladdress.text = '';
+                    email.text = '';
+                    phoneNumber.text = '';
+                    fullname.text = '';
+                    information.text = '';
+
                     showGeneralDialog(
                       barrierLabel: "Barrier",
                       barrierDismissible: true,

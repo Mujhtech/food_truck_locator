@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AppointMentModel {
+  int? type;
   String? id;
   String? truckId;
   String? userId;
@@ -13,6 +16,7 @@ class AppointMentModel {
 
   AppointMentModel(
       {this.id,
+      this.type,
       this.userId,
       this.truckId,
       this.address,
@@ -26,12 +30,13 @@ class AppointMentModel {
 
   factory AppointMentModel.fromJson(Map<String, dynamic> json) {
     return AppointMentModel(
+        type: json['type'],
         id: json['id'],
         userId: json['user_id'],
         truckOwnerId: json['truck_ownwer_id'],
         truckId: json['truck_id'],
         information: json['information'],
-        date: json['date'],
+        date: (json['date'] as Timestamp).toDate(),
         phoneNumber: json['phone_number'],
         fullname: json['fullname'],
         email: json['email'],
@@ -57,6 +62,7 @@ class AppointMentModel {
     data['email'] = email;
     data['number'] = number;
     data['phone_number'] = phoneNumber;
+    data['type'] = type;
     return data;
   }
 

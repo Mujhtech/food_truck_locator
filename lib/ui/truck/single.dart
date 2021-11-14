@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
 import 'package:food_truck_locator/ui/food/single.dart';
 import 'package:food_truck_locator/ui/home.dart';
+import 'package:food_truck_locator/ui/truck/edit.dart';
 import 'package:food_truck_locator/ui/truck/look_up.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/food_card.dart';
@@ -42,6 +44,7 @@ class _TruckSingleState extends State<TruckSingle>
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final food = watch(foodController);
+      final auth = watch(authControllerProvider);
       return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: Stack(children: [
@@ -254,8 +257,8 @@ class _TruckSingleState extends State<TruckSingle>
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                TruckLookUp(item: widget.item)));
+                                            builder: (context) => TruckLookUp(
+                                                item: widget.item)));
                                   },
                                   elevation: 0,
                                   color: Commons.primaryColor,
@@ -306,6 +309,39 @@ class _TruckSingleState extends State<TruckSingle>
                                     ),
                                   ),
                                 ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                if (widget.item.userId == auth.user!.uid)
+                                  MaterialButton(
+                                    onPressed: () async {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => TruckEdit(
+                                                    item: widget.item,
+                                                  )));
+                                    },
+                                    elevation: 0,
+                                    color:
+                                        Commons.primaryColor.withOpacity(0.1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Container(
+                                      width: context.screenWidth(1),
+                                      height: 53,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Edit Cuisine',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                                color: Commons.primaryColor),
+                                      ),
+                                    ),
+                                  )
                               ],
                             ),
                           ],
