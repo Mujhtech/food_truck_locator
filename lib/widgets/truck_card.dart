@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/utils/constant.dart';
@@ -20,7 +21,8 @@ class TruckCard extends StatelessWidget {
       width: context.screenWidth(width),
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(bannerImage), fit: BoxFit.cover),
+              image: CachedNetworkImageProvider(bannerImage),
+              fit: BoxFit.cover),
           borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -31,8 +33,8 @@ class TruckCard extends StatelessWidget {
             height: 25,
             decoration: BoxDecoration(
                 color: width == 0.5
-                        ? Commons.primaryColor
-                        : const Color(0xFFECECFE),
+                    ? Commons.primaryColor
+                    : const Color(0xFFECECFE),
                 borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(10),
                     bottomRight: Radius.circular(10))),

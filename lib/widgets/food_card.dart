@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 
@@ -19,7 +20,8 @@ class FoodCard extends StatelessWidget {
       width: 165,
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(bannerImage), fit: BoxFit.cover),
+              image: CachedNetworkImageProvider(bannerImage),
+              fit: BoxFit.cover),
           borderRadius: const BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
@@ -60,7 +61,7 @@ class _BookModalState extends State<BookModal> {
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16)),
                       image: DecorationImage(
-                        image: NetworkImage(widget.item.bannerImage!),
+                        image: CachedNetworkImageProvider(widget.item.bannerImage!),
                         fit: BoxFit.cover,
                       ),
                     ),

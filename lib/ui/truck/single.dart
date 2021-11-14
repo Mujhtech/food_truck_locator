@@ -194,7 +194,7 @@ class _TruckSingleState extends State<TruckSingle>
                         ),
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       Expanded(
                           child: TabBarView(controller: _myTab, children: [
@@ -333,7 +333,7 @@ class _TruckSingleState extends State<TruckSingle>
                                       height: 53,
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Edit Cuisine',
+                                        'Edit Truck',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1!

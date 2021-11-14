@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
@@ -18,6 +19,7 @@ class FoodEdit extends StatefulWidget {
 class _FoodEditState extends State<FoodEdit> {
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();
+  TextEditingController amount = TextEditingController();
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -148,6 +150,52 @@ class _FoodEditState extends State<FoodEdit> {
                           TextFormField(
                             validator: (v) {
                               if (v!.isEmpty) {
+                                return 'Price Field is required';
+                              }
+                            },
+                            controller: amount,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp('[0-9.,]+')),
+                              LengthLimitingTextInputFormatter(11),
+                            ],
+                            cursorColor: Commons.primaryColor,
+                            keyboardType: TextInputType.number,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(fontSize: 14),
+                            decoration: InputDecoration(
+                              enabledBorder:
+                                  Theme.of(context).inputDecorationTheme.border,
+                              focusedBorder:
+                                  Theme.of(context).inputDecorationTheme.border,
+                              focusedErrorBorder:
+                                  Theme.of(context).inputDecorationTheme.border,
+                              hintText: 'Price in USD',
+                              hintStyle:
+                                  const TextStyle(color: Color(0xFFAAAAAA)),
+                              errorBorder:
+                                  Theme.of(context).inputDecorationTheme.border,
+                              errorStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(color: Colors.red),
+                              fillColor: Theme.of(context)
+                                  .inputDecorationTheme
+                                  .fillColor,
+                              filled: true,
+                            ),
+                            autocorrect: false,
+                            autofocus: false,
+                            obscureText: false,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            validator: (v) {
+                              if (v!.isEmpty) {
                                 return 'About Field is required';
                               }
                             },
@@ -204,7 +252,7 @@ class _FoodEditState extends State<FoodEdit> {
                                   width: 1,
                                   color: const Color(0xFFCCCCCC),
                                   style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(4.0),
                             ),
                             child: Center(
                               child: Text(
@@ -242,7 +290,9 @@ class _FoodEditState extends State<FoodEdit> {
                               return;
                             }
                             if (!await food.create(
-                                title.text.trim(), description.text.trim())) {
+                                title.text.trim(),
+                                description.text.trim(),
+                                int.parse(amount.text.trim()))) {
                               return;
                             }
                             showGeneralDialog(

@@ -45,12 +45,13 @@ class FoodController extends ChangeNotifier {
     }
   }
 
-  Future<bool> create(String title, String description) async {
+  Future<bool> create(String title, String description, int price) async {
     try {
       loading = true;
       notifyListeners();
       String id = _read(firebaseFirestoreProvider).food().doc().id.toString();
       FoodModel item = FoodModel(
+          amount: price,
           id: id,
           title: title,
           description: description,

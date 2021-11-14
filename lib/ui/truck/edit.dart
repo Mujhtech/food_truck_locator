@@ -284,7 +284,7 @@ class _TruckEditState extends State<TruckEdit> {
                                   width: 1,
                                   color: const Color(0xFFCCCCCC),
                                   style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(4.0),
                             ),
                             child: Center(
                               child: Text(

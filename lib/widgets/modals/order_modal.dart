@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -64,7 +65,7 @@ class _OrderModalState extends State<OrderModal> {
                             topLeft: Radius.circular(16),
                             topRight: Radius.circular(16)),
                         image: DecorationImage(
-                          image: NetworkImage(widget.item.bannerImage!),
+                          image: CachedNetworkImageProvider(widget.item.bannerImage!),
                           fit: BoxFit.cover,
                         ),
                       ),

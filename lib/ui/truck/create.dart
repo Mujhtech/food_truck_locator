@@ -282,7 +282,7 @@ class _TruckCreateState extends State<TruckCreate> {
                                   width: 1,
                                   color: const Color(0xFFCCCCCC),
                                   style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(4.0),
                             ),
                             child: Center(
                               child: Text(
