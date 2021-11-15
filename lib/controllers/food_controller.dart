@@ -30,6 +30,18 @@ class FoodController extends ChangeNotifier {
     }
   }
 
+  List<FoodModel> filterFoodByTruck(String id) {
+    List<FoodModel> filterFood = [];
+    if (_foods != null && foods!.isNotEmpty) {
+      for (final data in _foods!) {
+        if (data.truckId == id) {
+          filterFood.add(data);
+        }
+      }
+    }
+    return filterFood;
+  }
+
   Future<void> retrieve() async {
     try {
       loading = true;

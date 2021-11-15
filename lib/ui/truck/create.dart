@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
@@ -5,6 +8,7 @@ import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class TruckCreate extends StatefulWidget {
   const TruckCreate({Key? key}) : super(key: key);
@@ -21,6 +25,12 @@ class _TruckCreateState extends State<TruckCreate> {
 
   final formKey = GlobalKey<FormState>();
 
+  final ImagePicker _picker = ImagePicker();
+
+  File? bannerImage;
+  File? featuredImage;
+  List<File>? galleries;
+
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
@@ -29,29 +39,60 @@ class _TruckCreateState extends State<TruckCreate> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
           children: [
-            Container(
-              width: context.screenWidth(1),
-              height: 160,
-              padding: const EdgeInsets.all(50),
-              color: const Color(0xFFEFEFEF),
-              child: Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    //padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100.0),
-                      color: const Color(0xFFFFFFFF),
-                    ),
-                    width: 50,
-                    height: 50,
-                    child: const Center(
-                      child: Icon(
-                        Icons.photo_camera,
-                        size: 20,
-                        color: Color(0xFFCCCCCC),
+            GestureDetector(
+              onTap: () async {
+                if (!await Commons.checkStoragePermission()) {
+                  if (!await Commons.requestStoragePermission()) {
+                    return;
+                  }
+                }
+                try {
+                  final XFile? image =
+                      await _picker.pickImage(source: ImageSource.gallery);
+                  if (image!.name.isNotEmpty) {
+                    setState(() {
+                      bannerImage = File(image.path);
+                    });
+                  }
+                  print(image);
+                } catch (err) {
+                  //print(err.toString());
+                }
+              },
+              child: Container(
+                width: context.screenWidth(1),
+                height: 160,
+                padding: const EdgeInsets.all(50),
+                decoration: const BoxDecoration(
+                    color: Color(0xFFEFEFEF),
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(
+                            "https://via.placeholder.com/150"))),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100.0),
+                        color: const Color(0xFFFFFFFF),
                       ),
-                    ),
-                  )),
+                      width: 50,
+                      height: 50,
+                      child: bannerImage != null
+                          ? Image.file(
+                              bannerImage!,
+                              width: 40,
+                              height: 40,
+                            )
+                          : const Center(
+                              child: Icon(
+                                Icons.photo_camera,
+                                size: 20,
+                                color: Color(0xFFCCCCCC),
+                              ),
+                            ),
+                    )),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -67,7 +108,29 @@ class _TruckCreateState extends State<TruckCreate> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          const SizedBox(height: 70),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                  color: const Color(0xFFFFFFFF),
+                                ),
+                                width: 42,
+                                height: 42,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    size: 20,
+                                    color: Color(0xFF656565),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 40),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Container(
@@ -86,11 +149,38 @@ class _TruckCreateState extends State<TruckCreate> {
                                   ]),
                               width: 105,
                               height: 105,
-                              child: SvgPicture.asset(
-                                'assets/images/User.svg',
-                                width: 200,
-                                height: 200,
-                                color: const Color(0xFF656565),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  if (!await Commons.checkStoragePermission()) {
+                                    if (!await Commons
+                                        .requestStoragePermission()) {
+                                      return;
+                                    }
+                                  }
+                                  try {
+                                    final XFile? image = await _picker
+                                        .pickImage(source: ImageSource.gallery);
+                                    if (image!.name.isNotEmpty) {
+                                      setState(() {
+                                        featuredImage = File(image.path);
+                                      });
+                                    }
+                                  } catch (err) {
+                                    //print(err.toString());
+                                  }
+                                },
+                                child: featuredImage != null
+                                    ? Image.file(
+                                        featuredImage!,
+                                        width: 200,
+                                        height: 200,
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/images/User.svg',
+                                        width: 200,
+                                        height: 200,
+                                        color: const Color(0xFF656565),
+                                      ),
                               ),
                             ),
                           ),
@@ -285,15 +375,43 @@ class _TruckCreateState extends State<TruckCreate> {
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                             child: Center(
-                              child: Text(
-                                'Browse',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(color: Commons.primaryColor),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  if (!await Commons.checkStoragePermission()) {
+                                    if (!await Commons
+                                        .requestStoragePermission()) {
+                                      return;
+                                    }
+                                  }
+                                  try {
+                                    final List<XFile>? images =
+                                        await _picker.pickMultiImage();
+                                    print(images);
+                                    // if (images!.isNotEmpty) {
+                                    //   for (final image in images) {
+                                    //     setState(() {
+                                    //       galleries!.add(File(image.path));
+                                    //     });
+                                    //   }
+                                    // }
+                                    print(galleries);
+                                  } catch (err) {
+                                    //print(err.toString());
+                                  }
+                                },
+                                child: Text(
+                                  galleries != null && galleries!.isNotEmpty
+                                      ? '${galleries!.length} images selected'
+                                      : 'Browse',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(color: Commons.primaryColor),
+                                ),
                               ),
                             ),
                           ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),

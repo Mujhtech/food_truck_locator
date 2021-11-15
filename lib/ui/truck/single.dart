@@ -348,7 +348,7 @@ class _TruckSingleState extends State<TruckSingle>
                             ),
                           ],
                         ),
-                        if (food.foods != null && food.foods!.isNotEmpty)
+                        if (food.filterFoodByTruck(widget.item.id!).isNotEmpty)
                           Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -357,7 +357,9 @@ class _TruckSingleState extends State<TruckSingle>
                                 child: GridView.builder(
                                     padding: const EdgeInsets.only(
                                         bottom: 10.0, top: 5.0),
-                                    itemCount: food.foods!.length,
+                                    itemCount: food
+                                        .filterFoodByTruck(widget.item.id!)
+                                        .length,
                                     scrollDirection: Axis.vertical,
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -372,16 +374,23 @@ class _TruckSingleState extends State<TruckSingle>
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      FoodSingle(
-                                                          item: food
-                                                              .foods![index])));
+                                                  builder: (context) => FoodSingle(
+                                                      item:
+                                                          food.filterFoodByTruck(
+                                                                  widget.item
+                                                                      .id!)[
+                                                              index])));
                                         },
                                         child: FoodCard(
                                           page: 2,
-                                          title: food.foods![index].title!,
-                                          bannerImage:
-                                              food.foods![index].bannerImage!,
+                                          title: food
+                                              .filterFoodByTruck(
+                                                  widget.item.id!)[index]
+                                              .title!,
+                                          bannerImage: food
+                                              .filterFoodByTruck(
+                                                  widget.item.id!)[index]
+                                              .bannerImage!,
                                         ),
                                       );
                                     }),
@@ -389,7 +398,15 @@ class _TruckSingleState extends State<TruckSingle>
                             ],
                           )
                         else
-                          ListView()
+                          ListView(
+                            children: [
+                              Center(
+                                  child: Text(
+                                'No cuisines available',
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ))
+                            ],
+                          )
                       ]))
                     ]))
           ]));

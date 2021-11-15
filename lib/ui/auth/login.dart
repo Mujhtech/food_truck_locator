@@ -74,16 +74,39 @@ class _LoginScreenState extends State<LoginScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Container(
+                child: SizedBox(
                   width: context.screenWidth(1),
                   height: 53,
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Continue with Google',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Commons.whiteColor),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 80,
+                        decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(0),
+                              bottomLeft: Radius.circular(0),
+                            )),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/Google.png',
+                            width: 30,
+                            height: 30,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      Text(
+                        'Continue with Google',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Commons.whiteColor),
+                      ),
+                    ],
                   ),
                 ),
               ),

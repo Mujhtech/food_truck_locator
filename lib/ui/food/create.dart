@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,6 +8,7 @@ import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FoodCreate extends StatefulWidget {
   const FoodCreate({Key? key}) : super(key: key);
@@ -19,6 +22,12 @@ class _FoodCreateState extends State<FoodCreate> {
   TextEditingController description = TextEditingController();
   TextEditingController amount = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
+  final ImagePicker _picker = ImagePicker();
+
+  File? bannerImage;
+  File? featuredImage;
+  List<File>? galleries;
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
