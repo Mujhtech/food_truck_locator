@@ -40,20 +40,38 @@ class CartController extends ChangeNotifier {
       saveData();
       notifyListeners();
       return true;
-    }
-    for (final cart in _carts!.data) {
-      if (cart.id == item.id) {
+    } else {
+      if (checkIfCartAvailable(item.id!)) {
         await edit(item: item, qty: qty);
       } else {
-        _carts = ListOfCartModel(data: [
-          ..._carts!.data,
-          CartModel(qty: qty, id: item.id, item: item)
-        ]);
-        saveData();
-        notifyListeners();
+        for (final cart in _carts!.data) {
+          if (cart.id != item.id) {
+            _carts = ListOfCartModel(data: [
+              ..._carts!.data,
+              CartModel(qty: qty, id: item.id, item: item)
+            ]);
+            saveData();
+            notifyListeners();
+            break;
+          }
+        }
+      }
+
+      return true;
+    }
+  }
+
+  bool checkIfCartAvailable(String id) {
+    bool answer = false;
+
+    for (final cart in _carts!.data) {
+      if (cart.id == id) {
+        answer = true;
+        break;
       }
     }
-    return true;
+
+    return answer;
   }
 
   Future<void> edit({required FoodModel item, required int qty}) async {

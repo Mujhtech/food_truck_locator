@@ -228,7 +228,11 @@ class _OrderModalState extends State<OrderModal> {
                     ),
                     MaterialButton(
                       onPressed: () async {
-                        await share.add(widget.item, cart);
+                        await share.add(
+                            widget.item,
+                            specialRequest.text.trim().isNotEmpty
+                                ? int.parse(specialRequest.text.trim())
+                                : cart);
                         showGeneralDialog(
                           barrierLabel: "Barrier",
                           barrierDismissible: true,

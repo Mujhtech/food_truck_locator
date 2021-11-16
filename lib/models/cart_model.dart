@@ -14,7 +14,7 @@ class CartModel {
   factory CartModel.fromJson(Map<String, dynamic> json) {
     return CartModel(
         id: json['id'],
-        item: json['item'],
+        item: FoodModel.fromJson(json['item'] as Map<String, dynamic>),
         qty: json['qty']);
   }
 
@@ -27,7 +27,7 @@ class CartModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['qty'] = qty;
     data['id'] = id;
-    data['item'] = item;
+    data['item'] = item!.toJson();
     return data;
   }
 

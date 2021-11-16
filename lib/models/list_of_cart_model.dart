@@ -9,14 +9,15 @@ class ListOfCartModel {
 
   ListOfCartModel.fromJson(Map<String, dynamic> json) {
     if (json["data"] != null) {
-      final v = json["data"];
+      final datas = json["data"];
       final arr0 = <CartModel>[];
-      v.forEach((v) {
-        arr0.add(CartModel.fromJson(v));
-      });
+      for (final data in datas) {
+        arr0.add(CartModel.fromJson(data as Map<String, dynamic>));
+      }
       data = arr0;
     }
   }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
 
