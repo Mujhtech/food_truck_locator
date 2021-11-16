@@ -8,9 +8,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 abstract class BaseFoodRepository {
   Future<List<FoodModel>> get({required String userId});
   Future<void> create({required String id, required FoodModel item});
-  Future<void> remove({required String userId, required String id});
-  Future<void> update(
-      {required String userId, required String id, required FoodModel item});
+  Future<void> remove({required String id});
+  Future<void> update({required String id, required FoodModel item});
 }
 
 final foodRepositoryProvider =
@@ -49,7 +48,7 @@ class FoodRepository implements BaseFoodRepository {
   }
 
   @override
-  Future<void> remove({required String userId, required String id}) async {
+  Future<void> remove({required String id}) async {
     try {
       await _read(firebaseFirestoreProvider).food().doc(id).delete();
     } on FirebaseException catch (e) {
@@ -58,10 +57,7 @@ class FoodRepository implements BaseFoodRepository {
   }
 
   @override
-  Future<void> update(
-      {required String userId,
-      required String id,
-      required FoodModel item}) async {
+  Future<void> update({required String id, required FoodModel item}) async {
     try {
       await _read(firebaseFirestoreProvider)
           .food()

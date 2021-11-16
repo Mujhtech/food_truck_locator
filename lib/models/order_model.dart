@@ -2,14 +2,19 @@ class OrderModel {
   String? id;
   String? userId;
   String? foodOwnerId;
+  String? foodId;
+  int? qty;
 
-  OrderModel({this.id, this.userId, this.foodOwnerId});
+  OrderModel({this.id, this.userId, this.foodOwnerId, this.qty, this.foodId});
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
-        id: json['id'],
-        foodOwnerId: json['food_owner_id'],
-        userId: json['user_id'],);
+      id: json['id'],
+      foodOwnerId: json['food_owner_id'],
+      userId: json['user_id'],
+      foodId: json['food_id'],
+      qty: json['qty'],
+    );
   }
 
   factory OrderModel.fromDocument(doc) {
@@ -22,6 +27,8 @@ class OrderModel {
     data['id'] = id;
     data['food_owner_id'] = foodOwnerId;
     data['user_id'] = userId;
+    data['food_id'] = foodId;
+    data['qty'] = qty;
     return data;
   }
 

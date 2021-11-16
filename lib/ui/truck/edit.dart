@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
@@ -5,7 +7,9 @@ import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 class TruckEdit extends StatefulWidget {
   final TruckModel item;
@@ -23,37 +27,104 @@ class _TruckEditState extends State<TruckEdit> {
 
   final formKey = GlobalKey<FormState>();
 
+  final ImagePicker _picker = ImagePicker();
+
+  File? bannerImage;
+  File? featuredImage;
+  List<File>? galleries;
+  double? lantitude, longitude;
+
+  @override
+  void initState() {
+    super.initState();
+    title.text = widget.item.title!;
+    location.text = widget.item.location!;
+    website.text = widget.item.website!;
+    description.text = widget.item.description!;
+  }
+
+  Future<void> updateGallery(List<XFile> images) async {
+    List<File> files = [];
+    if (images.isNotEmpty) {
+      for (final image in images) {
+        files.add(File(image.path));
+      }
+      setState(() {
+        galleries = [...files];
+      });
+    }
+  }
+
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final truck = watch(truckController);
       return Scaffold(
+        key: homeScaffoldKey,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
           children: [
-            Container(
-              width: context.screenWidth(1),
-              height: 160,
-              padding: const EdgeInsets.all(50),
-              color: const Color(0xFFEFEFEF),
-              child: Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    //padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100.0),
-                      color: const Color(0xFFFFFFFF),
-                    ),
-                    width: 50,
-                    height: 50,
-                    child: const Center(
-                      child: Icon(
-                        Icons.photo_camera,
-                        size: 20,
-                        color: Color(0xFFCCCCCC),
-                      ),
-                    ),
-                  )),
+            GestureDetector(
+              onTap: () async {
+                if (!await Commons.checkStoragePermission()) {
+                  if (!await Commons.requestStoragePermission()) {
+                    return;
+                  }
+                }
+                try {
+                  final XFile? image =
+                      await _picker.pickImage(source: ImageSource.gallery);
+                  if (image!.name.isNotEmpty) {
+                    setState(() {
+                      bannerImage = File(image.path);
+                    });
+                  }
+                  print(image);
+                } catch (err) {
+                  //print(err.toString());
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: context.screenWidth(1),
+                    height: 160,
+                    padding: const EdgeInsets.all(50),
+                    decoration: const BoxDecoration(
+                        color: Color(0xFFEFEFEF),
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: CachedNetworkImageProvider(
+                                "https://via.placeholder.com/150"))),
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100.0),
+                            color: const Color(0xFFFFFFFF),
+                          ),
+                          width: 50,
+                          height: 50,
+                          child: bannerImage != null
+                              ? Image.file(
+                                  bannerImage!,
+                                  width: 40,
+                                  height: 40,
+                                )
+                              : const Center(
+                                  child: Icon(
+                                    Icons.photo_camera,
+                                    size: 20,
+                                    color: Color(0xFFCCCCCC),
+                                  ),
+                                ),
+                        )),
+                  ),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -69,7 +140,29 @@ class _TruckEditState extends State<TruckEdit> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          const SizedBox(height: 70),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                  color: const Color(0xFFFFFFFF),
+                                ),
+                                width: 42,
+                                height: 42,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    size: 20,
+                                    color: Color(0xFF656565),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 40),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Container(
@@ -88,11 +181,38 @@ class _TruckEditState extends State<TruckEdit> {
                                   ]),
                               width: 105,
                               height: 105,
-                              child: SvgPicture.asset(
-                                'assets/images/User.svg',
-                                width: 200,
-                                height: 200,
-                                color: const Color(0xFF656565),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  if (!await Commons.checkStoragePermission()) {
+                                    if (!await Commons
+                                        .requestStoragePermission()) {
+                                      return;
+                                    }
+                                  }
+                                  try {
+                                    final XFile? image = await _picker
+                                        .pickImage(source: ImageSource.gallery);
+                                    if (image!.name.isNotEmpty) {
+                                      setState(() {
+                                        featuredImage = File(image.path);
+                                      });
+                                    }
+                                  } catch (err) {
+                                    //print(err.toString());
+                                  }
+                                },
+                                child: featuredImage != null
+                                    ? Image.file(
+                                        featuredImage!,
+                                        width: 200,
+                                        height: 200,
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/images/User.svg',
+                                        width: 200,
+                                        height: 200,
+                                        color: const Color(0xFF656565),
+                                      ),
                               ),
                             ),
                           ),
@@ -151,6 +271,21 @@ class _TruckEditState extends State<TruckEdit> {
                             validator: (v) {
                               if (v!.isEmpty) {
                                 return 'Location Field is required';
+                              }
+                            },
+                            onChanged: (value) async {
+                              if (value.isEmpty) return;
+                              try {
+                                List<Location> locations =
+                                    await locationFromAddress(value);
+                                Location location = locations[0];
+                                setState(() {
+                                  lantitude = location.latitude;
+                                  longitude = location.longitude;
+                                });
+                                print(location.latitude);
+                              } catch (err) {
+                                print(err.toString());
                               }
                             },
                             controller: location,
@@ -225,7 +360,7 @@ class _TruckEditState extends State<TruckEdit> {
                             autocorrect: false,
                             autofocus: false,
                             obscureText: false,
-                            maxLines: 5,
+                            maxLines: 6,
                           ),
                           const SizedBox(
                             height: 10,
@@ -274,28 +409,61 @@ class _TruckEditState extends State<TruckEdit> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            height: 100,
-                            width: context.screenWidth(1),
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFFFFF),
-                              border: Border.all(
-                                  width: 1,
-                                  color: const Color(0xFFCCCCCC),
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Browse',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(color: Commons.primaryColor),
+                          GestureDetector(
+                            onTap: () async {
+                              if (!await Commons.checkStoragePermission()) {
+                                if (!await Commons.requestStoragePermission()) {
+                                  return;
+                                }
+                              }
+                              try {
+                                final List<XFile>? images =
+                                    await _picker.pickMultiImage();
+                                await updateGallery(images!);
+                              } catch (err) {
+                                //print(err.toString());
+                              }
+                            },
+                            child: Container(
+                              height: 100,
+                              width: context.screenWidth(1),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFFFFF),
+                                border: Border.all(
+                                    width: 1,
+                                    color: const Color(0xFFCCCCCC),
+                                    style: BorderStyle.solid),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      galleries != null && galleries!.isNotEmpty
+                                          ? '${galleries!.length} images selected'
+                                          : 'Browse',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                              color: Commons.primaryColor,
+                                              fontSize: 18),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'Note: One of the selected images will be used for banner',
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText2,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
@@ -323,7 +491,11 @@ class _TruckEditState extends State<TruckEdit> {
                             title.text.trim(),
                             description.text.trim(),
                             location.text.trim(),
-                            website.text.trim())) {
+                            website.text.trim(),
+                            lantitude!,
+                            longitude!,
+                            '',
+                            '')) {
                           return;
                         }
                         showGeneralDialog(

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +6,7 @@ import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -30,12 +30,28 @@ class _TruckCreateState extends State<TruckCreate> {
   File? bannerImage;
   File? featuredImage;
   List<File>? galleries;
+  double? lantitude, longitude;
+
+  Future<void> updateGallery(List<XFile> images) async {
+    List<File> files = [];
+    if (images.isNotEmpty) {
+      for (final image in images) {
+        files.add(File(image.path));
+      }
+      setState(() {
+        galleries = [...files];
+      });
+    }
+  }
+
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final truck = watch(truckController);
       return Scaffold(
+        key: homeScaffoldKey,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
           children: [
@@ -59,39 +75,44 @@ class _TruckCreateState extends State<TruckCreate> {
                   //print(err.toString());
                 }
               },
-              child: Container(
-                width: context.screenWidth(1),
-                height: 160,
-                padding: const EdgeInsets.all(50),
-                decoration: const BoxDecoration(
-                    color: Color(0xFFEFEFEF),
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(
-                            "https://via.placeholder.com/150"))),
-                child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100.0),
-                        color: const Color(0xFFFFFFFF),
-                      ),
-                      width: 50,
-                      height: 50,
-                      child: bannerImage != null
-                          ? Image.file(
-                              bannerImage!,
-                              width: 40,
-                              height: 40,
-                            )
-                          : const Center(
-                              child: Icon(
-                                Icons.photo_camera,
-                                size: 20,
-                                color: Color(0xFFCCCCCC),
-                              ),
-                            ),
-                    )),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: context.screenWidth(1),
+                    height: 160,
+                    padding: const EdgeInsets.all(50),
+                    decoration: const BoxDecoration(
+                        color: Color(0xFFEFEFEF),
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: CachedNetworkImageProvider(
+                                "https://via.placeholder.com/150"))),
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100.0),
+                            color: const Color(0xFFFFFFFF),
+                          ),
+                          width: 50,
+                          height: 50,
+                          child: bannerImage != null
+                              ? Image.file(
+                                  bannerImage!,
+                                  width: 40,
+                                  height: 40,
+                                )
+                              : const Center(
+                                  child: Icon(
+                                    Icons.photo_camera,
+                                    size: 20,
+                                    color: Color(0xFFCCCCCC),
+                                  ),
+                                ),
+                        )),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -241,6 +262,21 @@ class _TruckCreateState extends State<TruckCreate> {
                                 return 'Location Field is required';
                               }
                             },
+                            onChanged: (value) async {
+                              if (value.isEmpty) return;
+                              try {
+                                List<Location> locations =
+                                    await locationFromAddress(value);
+                                Location location = locations[0];
+                                setState(() {
+                                  lantitude = location.latitude;
+                                  longitude = location.longitude;
+                                });
+                                print(location.latitude);
+                              } catch (err) {
+                                print(err.toString());
+                              }
+                            },
                             controller: location,
                             cursorColor: Commons.primaryColor,
                             keyboardType: TextInputType.text,
@@ -362,52 +398,57 @@ class _TruckCreateState extends State<TruckCreate> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            height: 100,
-                            width: context.screenWidth(1),
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFFFFF),
-                              border: Border.all(
-                                  width: 1,
-                                  color: const Color(0xFFCCCCCC),
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () async {
-                                  if (!await Commons.checkStoragePermission()) {
-                                    if (!await Commons
-                                        .requestStoragePermission()) {
-                                      return;
-                                    }
-                                  }
-                                  try {
-                                    final List<XFile>? images =
-                                        await _picker.pickMultiImage();
-                                    print(images);
-                                    // if (images!.isNotEmpty) {
-                                    //   for (final image in images) {
-                                    //     setState(() {
-                                    //       galleries!.add(File(image.path));
-                                    //     });
-                                    //   }
-                                    // }
-                                    print(galleries);
-                                  } catch (err) {
-                                    //print(err.toString());
-                                  }
-                                },
-                                child: Text(
-                                  galleries != null && galleries!.isNotEmpty
-                                      ? '${galleries!.length} images selected'
-                                      : 'Browse',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .copyWith(color: Commons.primaryColor),
-                                ),
+                          GestureDetector(
+                            onTap: () async {
+                              if (!await Commons.checkStoragePermission()) {
+                                if (!await Commons.requestStoragePermission()) {
+                                  return;
+                                }
+                              }
+                              try {
+                                final List<XFile>? images =
+                                    await _picker.pickMultiImage();
+                                await updateGallery(images!);
+                              } catch (err) {
+                                //print(err.toString());
+                              }
+                            },
+                            child: Container(
+                              height: 100,
+                              width: context.screenWidth(1),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFFFFF),
+                                border: Border.all(
+                                    width: 1,
+                                    color: const Color(0xFFCCCCCC),
+                                    style: BorderStyle.solid),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      galleries != null && galleries!.isNotEmpty
+                                          ? '${galleries!.length} images selected'
+                                          : 'Browse',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                              color: Commons.primaryColor,
+                                              fontSize: 18),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'Note: One of the selected images will be used for banner',
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText2,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -439,7 +480,11 @@ class _TruckCreateState extends State<TruckCreate> {
                             title.text.trim(),
                             description.text.trim(),
                             location.text.trim(),
-                            website.text.trim())) {
+                            website.text.trim(),
+                            lantitude!,
+                            longitude!,
+                            '',
+                            '')) {
                           return;
                         }
                         showGeneralDialog(

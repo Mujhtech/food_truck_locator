@@ -1,27 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
-import 'package:food_truck_locator/models/appointment_model.dart';
+import 'package:food_truck_locator/models/order_model.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-abstract class BaseAppointmentRepository {
-  Future<List<AppointMentModel>> get({required String userId});
-  Future<void> create({required String id, required AppointMentModel item});
-  Future<void> remove({required String id});
-  Future<void> update({required String id, required AppointMentModel item});
+abstract class BaseOrderRepository {
+  Future<List<OrderModel>> getAll();
+  Future<void> create({required String id, required OrderModel item});
+  Future<void> remove({required String userId, required String id});
+  Future<void> update({required String id, required OrderModel item});
 }
 
-final appointmentRepositoryProvider =
-    Provider<AppointmentRepository>((ref) => AppointmentRepository(ref.read));
+final orderRepositoryProvider =
+    Provider<OrderRepository>((ref) => OrderRepository(ref.read));
 
-class AppointmentRepository implements BaseAppointmentRepository {
+class OrderRepository implements BaseOrderRepository {
   final Reader _read;
-  const AppointmentRepository(this._read);
+  const OrderRepository(this._read);
 
   @override
-  Future<void> create(
-      {required String id, required AppointMentModel item}) async {
+  Future<void> create({required String id, required OrderModel item}) async {
     try {
       await _read(firebaseFirestoreProvider)
           .appointment()
@@ -33,16 +32,13 @@ class AppointmentRepository implements BaseAppointmentRepository {
   }
 
   @override
-  Future<List<AppointMentModel>> get({required String userId}) async {
+  Future<List<OrderModel>> getAll() async {
     try {
-      List<AppointMentModel> datas = [];
-      final snap = await _read(firebaseFirestoreProvider)
-          .appointment()
-          .where('user_id', isEqualTo: userId)
-          .get();
+      List<OrderModel> datas = [];
+      final snap = await _read(firebaseFirestoreProvider).order().get();
       for (var doc in snap.docs) {
-        AppointMentModel data =
-            AppointMentModel.fromJson(doc.data()! as Map<String, dynamic>);
+        OrderModel data =
+            OrderModel.fromJson(doc.data()! as Map<String, dynamic>);
         datas.add(data);
       }
       return datas;
@@ -52,7 +48,7 @@ class AppointmentRepository implements BaseAppointmentRepository {
   }
 
   @override
-  Future<void> remove({required String id}) async {
+  Future<void> remove({required String userId, required String id}) async {
     try {
       await _read(firebaseFirestoreProvider).appointment().doc(id).delete();
     } on FirebaseException catch (e) {
@@ -61,8 +57,7 @@ class AppointmentRepository implements BaseAppointmentRepository {
   }
 
   @override
-  Future<void> update(
-      {required String id, required AppointMentModel item}) async {
+  Future<void> update({required String id, required OrderModel item}) async {
     try {
       await _read(firebaseFirestoreProvider)
           .appointment()

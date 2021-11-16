@@ -70,14 +70,16 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialButton(
                 onPressed: () async {},
                 elevation: 0,
-                color: Commons.primaryColor,
+                color: Commons.whiteColor,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(
+                        color: Commons.primaryColor, width: 1)),
                 child: SizedBox(
                   width: context.screenWidth(1),
                   height: 53,
-                  child: Row(
+                  child: Wrap(
+                    direction: Axis.vertical,
                     children: [
                       Container(
                         height: 50,
@@ -96,15 +98,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 50,
-                      ),
-                      Text(
-                        'Continue with Google',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(color: Commons.whiteColor),
+                      Container(
+                        height: 70,
+                        width: context.screenWidth(0.675),
+                        decoration: const BoxDecoration(
+                            color: Commons.primaryColor,
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                            )),
+                        child: Center(
+                          child: Text(
+                            'Continue with Google',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(color: Commons.whiteColor),
+                          ),
+                        ),
                       ),
                     ],
                   ),

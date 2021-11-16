@@ -28,6 +28,19 @@ class _FoodCreateState extends State<FoodCreate> {
   File? bannerImage;
   File? featuredImage;
   List<File>? galleries;
+
+  Future<void> updateGallery(List<XFile> images) async {
+    List<File> files = [];
+    if (images.isNotEmpty) {
+      for (final image in images) {
+        files.add(File(image.path));
+      }
+      setState(() {
+        galleries = [...files];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
@@ -74,9 +87,29 @@ class _FoodCreateState extends State<FoodCreate> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          const SizedBox(
-                            height: 70,
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                  color: const Color(0xFFFFFFFF),
+                                ),
+                                width: 42,
+                                height: 42,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    size: 20,
+                                    color: Color(0xFF656565),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
+                          const SizedBox(height: 40),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Container(
@@ -95,11 +128,38 @@ class _FoodCreateState extends State<FoodCreate> {
                                   ]),
                               width: 105,
                               height: 105,
-                              child: SvgPicture.asset(
-                                'assets/images/User.svg',
-                                width: 200,
-                                height: 200,
-                                color: const Color(0xFF656565),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  if (!await Commons.checkStoragePermission()) {
+                                    if (!await Commons
+                                        .requestStoragePermission()) {
+                                      return;
+                                    }
+                                  }
+                                  try {
+                                    final XFile? image = await _picker
+                                        .pickImage(source: ImageSource.gallery);
+                                    if (image!.name.isNotEmpty) {
+                                      setState(() {
+                                        featuredImage = File(image.path);
+                                      });
+                                    }
+                                  } catch (err) {
+                                    //print(err.toString());
+                                  }
+                                },
+                                child: featuredImage != null
+                                    ? Image.file(
+                                        featuredImage!,
+                                        width: 200,
+                                        height: 200,
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/images/User.svg',
+                                        width: 200,
+                                        height: 200,
+                                        color: const Color(0xFF656565),
+                                      ),
                               ),
                             ),
                           ),
@@ -249,28 +309,61 @@ class _FoodCreateState extends State<FoodCreate> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            height: 100,
-                            width: context.screenWidth(1),
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFFFFF),
-                              border: Border.all(
-                                  width: 1,
-                                  color: const Color(0xFFCCCCCC),
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Browse',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(color: Commons.primaryColor),
+                          GestureDetector(
+                            onTap: () async {
+                              if (!await Commons.checkStoragePermission()) {
+                                if (!await Commons.requestStoragePermission()) {
+                                  return;
+                                }
+                              }
+                              try {
+                                final List<XFile>? images =
+                                    await _picker.pickMultiImage();
+                                await updateGallery(images!);
+                              } catch (err) {
+                                //print(err.toString());
+                              }
+                            },
+                            child: Container(
+                              height: 100,
+                              width: context.screenWidth(1),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFFFFF),
+                                border: Border.all(
+                                    width: 1,
+                                    color: const Color(0xFFCCCCCC),
+                                    style: BorderStyle.solid),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      galleries != null && galleries!.isNotEmpty
+                                          ? '${galleries!.length} images selected'
+                                          : 'Browse',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                              color: Commons.primaryColor,
+                                              fontSize: 18),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'Note: One of the selected images will be used for banner',
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText2,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),

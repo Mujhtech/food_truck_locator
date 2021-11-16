@@ -45,7 +45,15 @@ class TruckController extends ChangeNotifier {
     }
   }
 
-  Future<bool> create(String title, String description, String location, String website) async {
+  Future<bool> create(
+      String title,
+      String description,
+      String location,
+      String website,
+      double latitude,
+      double longitude,
+      String bannerImage,
+      String featuredImage) async {
     try {
       loading = true;
       notifyListeners();
@@ -56,11 +64,11 @@ class TruckController extends ChangeNotifier {
           description: description,
           plan: 'premium',
           location: location,
-          bannerImage: '',
-          featuredImage: '',
+          bannerImage: bannerImage,
+          featuredImage: featuredImage,
           website: website,
-          latitude: '',
-          longitude: '',
+          latitude: '$latitude',
+          longitude: '$longitude',
           userId: _userId);
       await _read(truckRepositoryProvider).create(id: id, item: item);
       loading = false;

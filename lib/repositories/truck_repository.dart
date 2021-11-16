@@ -8,9 +8,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 abstract class BaseTruckRepository {
   Future<List<TruckModel>> get({required String userId});
   Future<void> create({required String id, required TruckModel item});
-  Future<void> remove({required String userId, required String id});
-  Future<void> update(
-      {required String userId, required String id, required TruckModel item});
+  Future<void> remove({required String id});
+  Future<void> update({required String id, required TruckModel item});
 }
 
 final truckRepositoryProvider =
@@ -49,8 +48,7 @@ class TruckRepository implements BaseTruckRepository {
   }
 
   @override
-  Future<void> remove(
-      {required String userId, required String id}) async {
+  Future<void> remove({required String id}) async {
     try {
       await _read(firebaseFirestoreProvider).truck().doc(id).delete();
     } on FirebaseException catch (e) {
@@ -59,10 +57,7 @@ class TruckRepository implements BaseTruckRepository {
   }
 
   @override
-  Future<void> update(
-      {required String userId,
-      required String id,
-      required TruckModel item}) async {
+  Future<void> update({required String id, required TruckModel item}) async {
     try {
       await _read(firebaseFirestoreProvider)
           .truck()

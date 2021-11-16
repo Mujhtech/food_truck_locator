@@ -82,6 +82,32 @@ class FoodController extends ChangeNotifier {
     }
   }
 
+
+  Future<bool> update(String title, String description, int price) async {
+    try {
+      loading = true;
+      notifyListeners();
+      String id = _read(firebaseFirestoreProvider).food().doc().id.toString();
+      FoodModel item = FoodModel(
+          amount: price,
+          id: id,
+          title: title,
+          description: description,
+          bannerImage: '',
+          featuredImage: '',
+          userId: _userId);
+      await _read(foodRepositoryProvider).update(id: id, item: item);
+      loading = false;
+      notifyListeners();
+      return true;
+    } on CustomException catch (e) {
+      error = e.message;
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<List<String>> uploadFiles(List<File> _images) async {
     var imageUrls =
         await Future.wait(_images.map((_image) => uploadFile(_image)));
@@ -91,7 +117,7 @@ class FoodController extends ChangeNotifier {
 
   Future<String> uploadFile(File _image) async {
     Reference ref =
-        _read(firebaseStorageProvider).ref().child("trucks/" + _image.path);
+        _read(firebaseStorageProvider).ref().child("foods/" + _image.path);
     UploadTask uploadTask = ref.putFile(_image);
     final result = await uploadTask.then((res) async {
       return await res.ref.getDownloadURL();
