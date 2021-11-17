@@ -81,12 +81,25 @@ class FoodSingle extends StatelessWidget {
                               ]),
                           width: 105,
                           height: 105,
-                          child: SvgPicture.asset(
-                            'assets/images/User.svg',
-                            width: 200,
-                            height: 200,
-                            color: const Color(0xFF656565),
-                          ),
+                          child: item.featuredImage != null &&
+                                  item.featuredImage!.isNotEmpty
+                              ? Container(
+                                  width: 200,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(8)),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: CachedNetworkImageProvider(
+                                              item.featuredImage!))),
+                                )
+                              : SvgPicture.asset(
+                                  'assets/images/User.svg',
+                                  width: 200,
+                                  height: 200,
+                                  color: const Color(0xFF656565),
+                                ),
                         ),
                       ),
                       const SizedBox(

@@ -289,12 +289,7 @@ class _FoodEditState extends State<FoodEdit> {
                             if (!formKey.currentState!.validate()) {
                               return;
                             }
-                            if (!await food.create(
-                                title.text.trim(),
-                                description.text.trim(),
-                                int.parse(amount.text.trim()))) {
-                              return;
-                            }
+                            
                             showGeneralDialog(
                               barrierLabel: "Barrier",
                               barrierDismissible: true,

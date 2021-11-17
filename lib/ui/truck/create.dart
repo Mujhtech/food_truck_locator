@@ -476,7 +476,8 @@ class _TruckCreateState extends State<TruckCreate> {
                         if (!formKey.currentState!.validate()) {
                           return;
                         }
-                        if (featuredImage!.path.isEmpty) {
+                        if (featuredImage == null ||
+                            featuredImage!.path.isEmpty) {
                           const snackBar = SnackBar(
                               content: Text('Please select featured image'));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
