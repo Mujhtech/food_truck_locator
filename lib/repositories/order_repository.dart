@@ -23,7 +23,7 @@ class OrderRepository implements BaseOrderRepository {
   Future<void> create({required String id, required OrderModel item}) async {
     try {
       await _read(firebaseFirestoreProvider)
-          .appointment()
+          .order()
           .doc(id)
           .set(item.toJson());
     } on FirebaseException catch (e) {
@@ -50,7 +50,7 @@ class OrderRepository implements BaseOrderRepository {
   @override
   Future<void> remove({required String userId, required String id}) async {
     try {
-      await _read(firebaseFirestoreProvider).appointment().doc(id).delete();
+      await _read(firebaseFirestoreProvider).order().doc(id).delete();
     } on FirebaseException catch (e) {
       throw CustomException(message: e.message);
     }
@@ -60,7 +60,7 @@ class OrderRepository implements BaseOrderRepository {
   Future<void> update({required String id, required OrderModel item}) async {
     try {
       await _read(firebaseFirestoreProvider)
-          .appointment()
+          .order()
           .doc(id)
           .update(item.toDocument());
     } on FirebaseException catch (e) {

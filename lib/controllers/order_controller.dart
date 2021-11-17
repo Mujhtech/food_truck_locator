@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
+import 'package:food_truck_locator/models/cart_model.dart';
 import 'package:food_truck_locator/models/order_model.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
@@ -17,9 +18,11 @@ class OrderController extends ChangeNotifier {
   final String? _userId;
   String? error;
   List<OrderModel>? _orders;
+  List<OrderModel>? _myorders;
   bool loading = false;
 
   List<OrderModel>? get orders => _orders;
+  List<OrderModel>? get myorders => _myorders;
 
   OrderController(this._read, this._userId) {
     if (_userId != null) {
@@ -42,25 +45,45 @@ class OrderController extends ChangeNotifier {
     }
   }
 
-  Future<bool> create(
-    String foodId,
-    int qty,
-    String truckId,
-    String foodOwnerId,
-  ) async {
+  List<OrderModel> filterFoodByTruck(String userId) {
+    List<OrderModel> filterOrder = [];
+    if (_orders != null && _orders!.isNotEmpty) {
+      for (final data in _orders!) {
+        if (data.foodOwnerId == userId) {
+          filterOrder.add(data);
+        }
+      }
+    }
+    return filterOrder;
+  }
+
+  Future<bool> create(List<CartModel> items, String city, String address,
+      String country, String postal) async {
     try {
       loading = true;
+      List<OrderModel> myorder = [];
       notifyListeners();
-      String id =
-          _read(firebaseFirestoreProvider).appointment().doc().id.toString();
-      OrderModel item = OrderModel(
-          id: id,
-          qty: qty,
-          foodId: foodId,
-          foodOwnerId: foodOwnerId,
-          userId: _userId);
-      await _read(orderRepositoryProvider).create(id: id, item: item);
+      for (final data in items) {
+        String id =
+            _read(firebaseFirestoreProvider).order().doc().id.toString();
+        OrderModel item = OrderModel(
+            id: id,
+            qty: data.qty,
+            foodId: data.id,
+            foodOwnerId: data.item!.userId,
+            userId: _userId,
+            shippingAddress: address,
+            shippingCity: city,
+            shippingCountry: country,
+            shippingPostalCode: postal,
+            rating: 0,
+            comment: '',
+            status: 'Pending');
+        await _read(orderRepositoryProvider).create(id: id, item: item);
+        myorder.add(item);
+      }
       loading = false;
+      _myorders = myorder;
       notifyListeners();
       return true;
     } on CustomException catch (e) {

@@ -42,6 +42,10 @@ class FoodController extends ChangeNotifier {
     return filterFood;
   }
 
+  FoodModel filterFoodbyId(String id) {
+    return _foods!.firstWhere((food) => food.id! == id);
+  }
+
   Future<void> retrieve() async {
     try {
       loading = true;

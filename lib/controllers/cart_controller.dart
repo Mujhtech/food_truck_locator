@@ -93,4 +93,10 @@ class CartController extends ChangeNotifier {
     saveData();
     notifyListeners();
   }
+
+  Future<void> emptyCart() async {
+    _carts = ListOfCartModel(data: []);
+    saveData();
+    notifyListeners();
+  }
 }

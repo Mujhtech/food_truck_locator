@@ -30,6 +30,10 @@ class TruckController extends ChangeNotifier {
     }
   }
 
+  TruckModel filterTruckbyId(String id) {
+    return _trucks!.firstWhere((truck) => truck.id! == id);
+  }
+
   Future<void> retrieve() async {
     try {
       loading = true;

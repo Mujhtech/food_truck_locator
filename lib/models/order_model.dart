@@ -4,8 +4,27 @@ class OrderModel {
   String? foodOwnerId;
   String? foodId;
   int? qty;
+  String? shippingPostalCode;
+  String? shippingAddress;
+  String? shippingCity;
+  String? shippingCountry;
+  String? status;
+  int? rating;
+  String? comment;
 
-  OrderModel({this.id, this.userId, this.foodOwnerId, this.qty, this.foodId});
+  OrderModel(
+      {this.id,
+      this.userId,
+      this.foodOwnerId,
+      this.qty,
+      this.foodId,
+      this.shippingPostalCode,
+      this.shippingCountry,
+      this.shippingCity,
+      this.shippingAddress,
+      this.comment,
+      this.rating,
+      this.status});
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
@@ -14,6 +33,13 @@ class OrderModel {
       userId: json['user_id'],
       foodId: json['food_id'],
       qty: json['qty'],
+      shippingAddress: json['shipping_address'],
+      shippingCity: json['shipping_city'],
+      shippingCountry: json['shipping_country'],
+      shippingPostalCode: json['shipping_postal_code'],
+      rating: json['rating'],
+      comment: json['comment'],
+      status: json['status'],
     );
   }
 
@@ -29,6 +55,13 @@ class OrderModel {
     data['user_id'] = userId;
     data['food_id'] = foodId;
     data['qty'] = qty;
+    data['shipping_address'] = shippingAddress;
+    data['shipping_city'] = shippingCity;
+    data['shipping_country'] = shippingCountry;
+    data['shipping_postal_code'] = shippingPostalCode;
+    data['comment'] = comment;
+    data['rating'] = rating;
+    data['status'] = status;
     return data;
   }
 

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:food_truck_locator/controllers/cart_controller.dart';
-import 'package:food_truck_locator/controllers/order_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
-import 'package:food_truck_locator/ui/order_confirm.dart';
 import 'package:food_truck_locator/ui/shipping.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -26,7 +25,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final cart = watch(cartController);
-      final order = watch(orderControllerProvider);
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -136,6 +134,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   return 'Full Address Field is required';
                                 }
                               },
+                              controller: address,
                               cursorColor: Commons.primaryColor,
                               keyboardType: TextInputType.text,
                               style: Theme.of(context)
@@ -180,6 +179,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   return 'City Field is required';
                                 }
                               },
+                              controller: city,
                               cursorColor: Commons.primaryColor,
                               keyboardType: TextInputType.text,
                               style: Theme.of(context)
@@ -224,6 +224,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   return 'Country Field is required';
                                 }
                               },
+                              controller: country,
                               cursorColor: Commons.primaryColor,
                               keyboardType: TextInputType.text,
                               style: Theme.of(context)
@@ -268,8 +269,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   return 'Postal Code Field is required';
                                 }
                               },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp('[0-9.,]+')),
+                                LengthLimitingTextInputFormatter(6),
+                              ],
+                              controller: postal,
                               cursorColor: Commons.primaryColor,
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.number,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText1!
@@ -336,8 +343,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const OrderConfirmationScreen()));
+                                  builder: (context) => ShippingScreen(
+                                      country: country.text.trim(),
+                                      postalCode: postal.text.trim(),
+                                      address: address.text.trim(),
+                                      city: city.text.trim())));
                         },
                         elevation: 0,
                         color: Commons.primaryColor,
