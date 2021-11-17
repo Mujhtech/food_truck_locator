@@ -10,7 +10,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class BookModal extends StatefulWidget {
   final TruckModel item;
-  const BookModal({Key? key, required this.item}) : super(key: key);
+  final double km;
+  const BookModal({Key? key, required this.item, required this.km})
+      : super(key: key);
 
   @override
   State<BookModal> createState() => _BookModalState();
@@ -61,7 +63,8 @@ class _BookModalState extends State<BookModal> {
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16)),
                       image: DecorationImage(
-                        image: CachedNetworkImageProvider(widget.item.bannerImage!),
+                        image: CachedNetworkImageProvider(
+                            widget.item.bannerImage!),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -120,42 +123,64 @@ class _BookModalState extends State<BookModal> {
                         height: 10,
                       ),
                       Text(
-                        '5km Away',
+                        '${widget.km}km Away',
                         style: Theme.of(context).textTheme.bodyText2!.copyWith(
                             fontSize: 14, color: Commons.primaryColor),
                       ),
                     ],
                   ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (await canLaunch(widget.item.website!)) {
-                        await launch(widget.item.website!);
-                      } else {
-                        throw 'Could not launch the url';
-                      }
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.language,
-                          size: 20,
-                          color: Color(0xFF656565),
+                  widget.item.website != null && widget.item.website!.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () async {
+                            if (await canLaunch(widget.item.website!)) {
+                              await launch(widget.item.website!);
+                            } else {
+                              throw 'Could not launch the url';
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.language,
+                                size: 20,
+                                color: Color(0xFF656565),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(widget.item.website!,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(
+                                          color: Commons.primaryColor,
+                                          fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.language,
+                              size: 20,
+                              color: Color(0xFF656565),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text('No url',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                        color: Commons.primaryColor,
+                                        fontWeight: FontWeight.w600)),
+                          ],
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(widget.item.website!,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(
-                                    color: Commons.primaryColor,
-                                    fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                  ),
                   Column(
                     children: [
                       MaterialButton(

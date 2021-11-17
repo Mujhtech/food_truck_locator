@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class FoodModel {
   String? id;
   String? userId;
@@ -7,17 +9,18 @@ class FoodModel {
   String? bannerImage;
   String? truckId;
   int? amount;
+  List<String>? galleries;
 
-  FoodModel({
-    this.id,
-    this.userId,
-    this.bannerImage,
-    this.description,
-    this.featuredImage,
-    this.truckId,
-    this.title,
-    this.amount
-  });
+  FoodModel(
+      {this.id,
+      this.userId,
+      this.bannerImage,
+      this.description,
+      this.featuredImage,
+      this.truckId,
+      this.title,
+      this.amount,
+      this.galleries});
 
   factory FoodModel.fromJson(Map<String, dynamic> json) {
     return FoodModel(
@@ -28,7 +31,10 @@ class FoodModel {
         description: json['description'],
         featuredImage: json['featured_image'],
         bannerImage: json['banner_image'],
-        amount: json['amount']);
+        amount: json['amount'],
+        galleries: json['galleries'] != null && json['galleries'].length > 0
+            ? json['galleries'].cast<String>()
+            : []);
   }
 
   factory FoodModel.fromDocument(doc) {
@@ -46,6 +52,7 @@ class FoodModel {
     data['featured_image'] = featuredImage;
     data['banner_image'] = bannerImage;
     data['amount'] = amount;
+    data['galleries'] = galleries;
     return data;
   }
 

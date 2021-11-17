@@ -112,12 +112,25 @@ class _TruckSingleState extends State<TruckSingle>
                                   ]),
                               width: 105,
                               height: 105,
-                              child: SvgPicture.asset(
-                                'assets/images/User.svg',
-                                width: 200,
-                                height: 200,
-                                color: const Color(0xFF656565),
-                              ),
+                              child: widget.item.featuredImage != null &&
+                                      widget.item.featuredImage!.isNotEmpty
+                                  ? Container(
+                                      width: 200,
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(8)),
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: CachedNetworkImageProvider(
+                                                  widget.item.featuredImage!))),
+                                    )
+                                  : SvgPicture.asset(
+                                      'assets/images/User.svg',
+                                      width: 200,
+                                      height: 200,
+                                      color: const Color(0xFF656565),
+                                    ),
                             ),
                           ),
                           const SizedBox(
@@ -212,35 +225,61 @@ class _TruckSingleState extends State<TruckSingle>
                             const SizedBox(
                               height: 10,
                             ),
-                            GestureDetector(
-                              onTap: () async {
-                                if (await canLaunch(widget.item.website!)) {
-                                  await launch(widget.item.website!);
-                                } else {
-                                  throw 'Could not launch the url';
-                                }
-                              },
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.language,
-                                    size: 20,
-                                    color: Color(0xFF656565),
+                            widget.item.website != null &&
+                                    widget.item.website!.isNotEmpty
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      if (await canLaunch(
+                                          widget.item.website!)) {
+                                        await launch(widget.item.website!);
+                                      } else {
+                                        throw 'Could not launch the url';
+                                      }
+                                    },
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.language,
+                                          size: 20,
+                                          color: Color(0xFF656565),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(widget.item.website!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1!
+                                                .copyWith(
+                                                    color: Commons.primaryColor,
+                                                    fontWeight:
+                                                        FontWeight.w600)),
+                                      ],
+                                    ),
+                                  )
+                                : Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.language,
+                                        size: 20,
+                                        color: Color(0xFF656565),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text('No url',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1!
+                                              .copyWith(
+                                                  color: Commons.primaryColor,
+                                                  fontWeight: FontWeight.w600)),
+                                    ],
                                   ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(widget.item.website!,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                              color: Commons.primaryColor,
-                                              fontWeight: FontWeight.w600)),
-                                ],
-                              ),
-                            ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -249,6 +288,41 @@ class _TruckSingleState extends State<TruckSingle>
                             const SizedBox(
                               height: 10,
                             ),
+                            if (widget.item.galleries != null &&
+                                widget.item.galleries!.isNotEmpty)
+                              GridView.builder(
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.only(
+                                      bottom: 10.0, top: 5.0),
+                                  itemCount: widget.item.galleries!.length,
+                                  scrollDirection: Axis.vertical,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: (1 / 1.1),
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      width: context.screenWidth(0.5),
+                                      height: 165,
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          image: DecorationImage(
+                                              image: CachedNetworkImageProvider(
+                                                  widget
+                                                      .item.galleries![index]),
+                                              fit: BoxFit.cover)),
+                                    );
+                                  })
+                            else
+                              Center(
+                                child: Text('No images found',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2),
+                              ),
                             const SizedBox(
                               height: 10,
                             ),

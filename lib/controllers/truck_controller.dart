@@ -57,7 +57,8 @@ class TruckController extends ChangeNotifier {
       double latitude,
       double longitude,
       String bannerImage,
-      String featuredImage) async {
+      String featuredImage,
+      List<String> galleries) async {
     try {
       loading = true;
       notifyListeners();
@@ -73,9 +74,11 @@ class TruckController extends ChangeNotifier {
           website: website,
           latitude: '$latitude',
           longitude: '$longitude',
-          userId: _userId);
+          userId: _userId,
+          galleries: galleries);
       await _read(truckRepositoryProvider).create(id: id, item: item);
       loading = false;
+      retrieve();
       notifyListeners();
       return true;
     } on CustomException catch (e) {
@@ -87,20 +90,27 @@ class TruckController extends ChangeNotifier {
   }
 
   Future<List<String>> uploadFiles(List<File> _images) async {
+    loading = true;
+    notifyListeners();
     var imageUrls =
         await Future.wait(_images.map((_image) => uploadFile(_image)));
     //print(imageUrls);
+    loading = false;
+    notifyListeners();
     return imageUrls;
   }
 
   Future<String> uploadFile(File _image) async {
+    loading = true;
+    notifyListeners();
     Reference ref =
         _read(firebaseStorageProvider).ref().child("trucks/" + _image.path);
     UploadTask uploadTask = ref.putFile(_image);
     final result = await uploadTask.then((res) async {
       return await res.ref.getDownloadURL();
     });
-
+    loading = false;
+    notifyListeners();
     return result;
   }
 }

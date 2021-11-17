@@ -10,6 +10,7 @@ class TruckModel {
   String? longitude;
   String? website;
   String? userId;
+  List<String>? galleries;
 
   TruckModel(
       {this.id,
@@ -22,7 +23,8 @@ class TruckModel {
       this.location,
       this.longitude,
       this.website,
-      this.userId});
+      this.userId,
+      this.galleries});
 
   factory TruckModel.fromJson(Map<String, dynamic> json) {
     return TruckModel(
@@ -31,12 +33,15 @@ class TruckModel {
         userId: json['user_id'],
         website: json['website'],
         location: json['location'],
-        latitude: json['latitude'],
-        longitude: json['longitude'],
+        latitude: json['latitude'] ?? '0',
+        longitude: json['longitude'] ?? '0',
         plan: json['plan'],
         description: json['description'],
         featuredImage: json['featured_image'],
-        bannerImage: json['banner_image']);
+        bannerImage: json['banner_image'],
+        galleries: json['galleries'] != null && json['galleries'].length > 0
+            ? json['galleries'].cast<String>()
+            : []);
   }
 
   factory TruckModel.fromDocument(doc) {
@@ -57,6 +62,7 @@ class TruckModel {
     data['longitude'] = longitude;
     data['featured_image'] = featuredImage;
     data['banner_image'] = bannerImage;
+    data['galleries'] = galleries;
     return data;
   }
 

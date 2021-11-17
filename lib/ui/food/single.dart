@@ -104,7 +104,38 @@ class FoodSingle extends StatelessWidget {
                             Text(item.description!,
                                 style: Theme.of(context).textTheme.bodyText1),
                             const SizedBox(
-                              height: 20,
+                              height: 10,
+                            ),
+                            if (item.galleries != null &&
+                                item.galleries!.isNotEmpty)
+                              GridView.builder(
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.only(
+                                      bottom: 10.0, top: 5.0),
+                                  itemCount: item.galleries!.length,
+                                  scrollDirection: Axis.vertical,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: (1 / 1.1),
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      width: context.screenWidth(0.5),
+                                      height: 165,
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          image: DecorationImage(
+                                              image: CachedNetworkImageProvider(
+                                                  item.galleries![index]),
+                                              fit: BoxFit.cover)),
+                                    );
+                                  }),
+                            const SizedBox(
+                              height: 10,
                             ),
                             Column(
                               children: [

@@ -93,12 +93,12 @@ class _TruckEditState extends State<TruckEdit> {
                     width: context.screenWidth(1),
                     height: 160,
                     padding: const EdgeInsets.all(50),
-                    decoration: const BoxDecoration(
-                        color: Color(0xFFEFEFEF),
+                    decoration: BoxDecoration(
+                        color: const Color(0xFFEFEFEF),
                         image: DecorationImage(
                             fit: BoxFit.cover,
                             image: CachedNetworkImageProvider(
-                                "https://via.placeholder.com/150"))),
+                                widget.item.bannerImage!))),
                     child: Align(
                         alignment: Alignment.center,
                         child: Container(
@@ -182,38 +182,45 @@ class _TruckEditState extends State<TruckEdit> {
                               width: 105,
                               height: 105,
                               child: GestureDetector(
-                                onTap: () async {
-                                  if (!await Commons.checkStoragePermission()) {
+                                  onTap: () async {
                                     if (!await Commons
-                                        .requestStoragePermission()) {
-                                      return;
+                                        .checkStoragePermission()) {
+                                      if (!await Commons
+                                          .requestStoragePermission()) {
+                                        return;
+                                      }
                                     }
-                                  }
-                                  try {
-                                    final XFile? image = await _picker
-                                        .pickImage(source: ImageSource.gallery);
-                                    if (image!.name.isNotEmpty) {
-                                      setState(() {
-                                        featuredImage = File(image.path);
-                                      });
+                                    try {
+                                      final XFile? image =
+                                          await _picker.pickImage(
+                                              source: ImageSource.gallery);
+                                      if (image!.name.isNotEmpty) {
+                                        setState(() {
+                                          featuredImage = File(image.path);
+                                        });
+                                      }
+                                    } catch (err) {
+                                      //print(err.toString());
                                     }
-                                  } catch (err) {
-                                    //print(err.toString());
-                                  }
-                                },
-                                child: featuredImage != null
-                                    ? Image.file(
-                                        featuredImage!,
-                                        width: 200,
-                                        height: 200,
-                                      )
-                                    : SvgPicture.asset(
-                                        'assets/images/User.svg',
-                                        width: 200,
-                                        height: 200,
-                                        color: const Color(0xFF656565),
-                                      ),
-                              ),
+                                  },
+                                  child: featuredImage != null
+                                      ? Image.file(
+                                          featuredImage!,
+                                          width: 200,
+                                          height: 200,
+                                        )
+                                      : Container(
+                                          width: 200,
+                                          height: 200,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(8)),
+                                              image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: CachedNetworkImageProvider(
+                                                      widget.item
+                                                          .featuredImage!))))),
                             ),
                           ),
                           const SizedBox(
@@ -487,121 +494,140 @@ class _TruckEditState extends State<TruckEdit> {
                         if (!formKey.currentState!.validate()) {
                           return;
                         }
-                        if (!await truck.create(
-                            title.text.trim(),
-                            description.text.trim(),
-                            location.text.trim(),
-                            website.text.trim(),
-                            lantitude!,
-                            longitude!,
-                            '',
-                            '')) {
+                        if (galleries!.length < 2) {
+                          const snackBar = SnackBar(
+                              content: Text('Please minimum of 2 images'));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           return;
                         }
-                        showGeneralDialog(
-                          barrierLabel: "Barrier",
-                          barrierDismissible: true,
-                          barrierColor: Colors.black.withOpacity(0.5),
-                          transitionDuration: const Duration(milliseconds: 200),
-                          context: context,
-                          pageBuilder: (_, __, ___) {
-                            return Align(
-                              alignment: Alignment.center,
-                              child: Container(
-                                height: 283,
-                                width: 293,
-                                child: SizedBox.expand(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      height: 75,
-                                      width: 75,
-                                      decoration: BoxDecoration(
-                                        color: Commons.primaryColor
-                                            .withOpacity(0.05),
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                      ),
-                                      child: const Icon(
-                                        Icons.check,
-                                        color: Commons.primaryColor,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Center(
-                                      child: Text(
-                                        'Successful',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1!
-                                            .copyWith(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Center(
-                                      child: Text(
-                                        'Your truck has been addedd\nsuccessfully',
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1!
-                                            .copyWith(fontSize: 14),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Center(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const HomeScreen()),
-                                              (Route<dynamic> route) => false);
-                                        },
-                                        child: Text(
-                                          'Return Home',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText1!
-                                              .copyWith(
-                                                  fontSize: 14,
-                                                  color: Commons.primaryColor),
+                        try {
+                          final featured =
+                              await truck.uploadFile(featuredImage!);
+                          final gallery = await truck.uploadFiles(galleries!);
+                          if (!await truck.create(
+                              title.text.trim(),
+                              description.text.trim(),
+                              location.text.trim(),
+                              website.text.trim(),
+                              lantitude!,
+                              longitude!,
+                              featured,
+                              gallery[0],
+                              gallery)) {
+                            return;
+                          } else {
+                            showGeneralDialog(
+                              barrierLabel: "Barrier",
+                              barrierDismissible: true,
+                              barrierColor: Colors.black.withOpacity(0.5),
+                              transitionDuration:
+                                  const Duration(milliseconds: 200),
+                              context: context,
+                              pageBuilder: (_, __, ___) {
+                                return Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    height: 283,
+                                    width: 293,
+                                    child: SizedBox.expand(
+                                        child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: 75,
+                                          width: 75,
+                                          decoration: BoxDecoration(
+                                            color: Commons.primaryColor
+                                                .withOpacity(0.05),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          child: const Icon(
+                                            Icons.check,
+                                            color: Commons.primaryColor,
+                                          ),
                                         ),
-                                      ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            'Successful',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline1!
+                                                .copyWith(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            'Your truck has been addedd\nsuccessfully',
+                                            textAlign: TextAlign.center,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1!
+                                                .copyWith(fontSize: 14),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Center(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const HomeScreen()),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                            },
+                                            child: Text(
+                                              'Return Home',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1!
+                                                  .copyWith(
+                                                      fontSize: 14,
+                                                      color:
+                                                          Commons.primaryColor),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                    margin: const EdgeInsets.only(
+                                        bottom: 50, left: 12, right: 12),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                  ],
-                                )),
-                                margin: const EdgeInsets.only(
-                                    bottom: 50, left: 12, right: 12),
-                                decoration: BoxDecoration(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
+                                  ),
+                                );
+                              },
+                              transitionBuilder: (_, anim, __, child) {
+                                return SlideTransition(
+                                  position: Tween(
+                                          begin: const Offset(0, 1),
+                                          end: const Offset(0, 0))
+                                      .animate(anim),
+                                  child: child,
+                                );
+                              },
                             );
-                          },
-                          transitionBuilder: (_, anim, __, child) {
-                            return SlideTransition(
-                              position: Tween(
-                                      begin: const Offset(0, 1),
-                                      end: const Offset(0, 0))
-                                  .animate(anim),
-                              child: child,
-                            );
-                          },
-                        );
+                          }
+                        } catch (err) {}
                       },
                       elevation: 0,
                       color: Commons.primaryColor,
