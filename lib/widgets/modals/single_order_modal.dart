@@ -102,6 +102,28 @@ class SingleOrderModal extends StatelessWidget {
                                       fontWeight: FontWeight.w700),
                             ),
                           ),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            color: Commons.primaryColor.withOpacity(0.1),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.shopping_cart,
+                                    size: 24, color: Commons.primaryColor),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(item.status!,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(
+                                            color: Commons.primaryColor,
+                                            fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                          ),
                           Column(
                             children: [
                               Row(children: [

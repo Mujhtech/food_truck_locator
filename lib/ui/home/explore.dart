@@ -44,8 +44,13 @@ class ExploreScreen extends StatelessWidget {
                       onTap: () => showCupertinoModalBottomSheet(
                           elevation: 0,
                           expand: true,
+                          shadow: const BoxShadow(color: Colors.transparent),
+                          backgroundColor: Colors.transparent,
+                          transitionBackgroundColor: Colors.transparent,
                           context: context,
-                          builder: (context) => const SearchModal()),
+                          builder: (context) => SearchModal(
+                                trucks: truck.trucks!,
+                              )),
                       child: Container(
                           height: 47,
                           width: 47,
