@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:food_truck_locator/models/food_model.dart';
 import 'package:food_truck_locator/repositories/share_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';

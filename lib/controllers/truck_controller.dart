@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
@@ -11,23 +9,19 @@ import 'package:food_truck_locator/repositories/truck_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final truckController = ChangeNotifierProvider<TruckController>((ref) {
-  final user = ref.watch(authControllerProvider);
-  return TruckController(ref.read, user.user?.uid)..retrieve();
+  return TruckController(ref.read)..retrieve();
 });
 
 class TruckController extends ChangeNotifier {
   final Reader _read;
-  final String? _userId;
   String? error;
   List<TruckModel>? _trucks;
   bool loading = false;
 
   List<TruckModel>? get trucks => _trucks;
 
-  TruckController(this._read, this._userId) {
-    if (_userId != null) {
-      retrieve();
-    }
+  TruckController(this._read) {
+    retrieve();
   }
 
   TruckModel filterTruckbyId(String id) {
@@ -38,7 +32,7 @@ class TruckController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
-      final items = await _read(truckRepositoryProvider).get(userId: _userId!);
+      final items = await _read(truckRepositoryProvider).get();
       _trucks = items;
       loading = false;
       notifyListeners();
@@ -50,6 +44,7 @@ class TruckController extends ChangeNotifier {
   }
 
   Future<bool> create(
+      String userId,
       String title,
       String description,
       String location,
@@ -74,7 +69,7 @@ class TruckController extends ChangeNotifier {
           website: website,
           latitude: '$latitude',
           longitude: '$longitude',
-          userId: _userId,
+          userId: userId,
           galleries: galleries);
       await _read(truckRepositoryProvider).create(id: id, item: item);
       loading = false;

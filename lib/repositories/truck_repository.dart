@@ -6,7 +6,7 @@ import 'package:food_truck_locator/repositories/custom_exception.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 abstract class BaseTruckRepository {
-  Future<List<TruckModel>> get({required String userId});
+  Future<List<TruckModel>> get();
   Future<void> create({required String id, required TruckModel item});
   Future<void> remove({required String id});
   Future<void> update({required String id, required TruckModel item});
@@ -29,12 +29,11 @@ class TruckRepository implements BaseTruckRepository {
   }
 
   @override
-  Future<List<TruckModel>> get({required String userId}) async {
+  Future<List<TruckModel>> get() async {
     try {
       List<TruckModel> trucks = [];
       final snap = await _read(firebaseFirestoreProvider)
           .truck()
-          .where('user_id', isEqualTo: userId)
           .get();
       for (var doc in snap.docs) {
         TruckModel truck =

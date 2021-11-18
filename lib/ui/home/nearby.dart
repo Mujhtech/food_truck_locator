@@ -313,24 +313,6 @@ class _NearbyScreenState extends State<NearbyScreen> {
                       ]),
                 ),
               ),
-        // body: SafeArea(
-        //   child: Padding(
-        //     padding: const EdgeInsets.only(left: 10, right: 10),
-        //     child: Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //       children: [
-        //         Text(
-        //           'Near By',
-        //           style: Theme.of(context)
-        //               .textTheme
-        //               .headline1!
-        //               .copyWith(fontWeight: FontWeight.bold),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
       );
     });
   }

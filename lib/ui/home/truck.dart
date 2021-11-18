@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/event.dart';
@@ -16,9 +17,16 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 class TruckScreen extends HookWidget {
   const TruckScreen({Key? key}) : super(key: key);
 
+  int daysBetween(DateTime from, DateTime to) {
+    from = DateTime(from.year, from.month, from.day);
+    to = DateTime(to.year, to.month, to.day);
+    return (to.difference(from).inHours / 24).round();
+  }
+
   @override
   Widget build(BuildContext context) {
     final truck = useProvider(truckController);
+    final auth = useProvider(authControllerProvider);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -143,10 +151,33 @@ class TruckScreen extends HookWidget {
                   ),
                   MaterialButton(
                     onPressed: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const TruckCreate()));
+                      if (auth.user!.planName == "basic") {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TruckPlan()));
+                      } else if (auth.user!.planName == "standard" &&
+                          daysBetween(
+                                  DateTime.now(), auth.user!.planExpiredDate!) <
+                              0) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TruckPlan()));
+                      } else if (auth.user!.planName == "premium" &&
+                          daysBetween(
+                                  DateTime.now(), auth.user!.planExpiredDate!) <
+                              0) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TruckPlan()));
+                      } else {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TruckCreate()));
+                      }
                     },
                     elevation: 0,
                     color: Commons.primaryColor,

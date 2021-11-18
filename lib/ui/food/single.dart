@@ -219,7 +219,8 @@ class FoodSingle extends StatelessWidget {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if (item.userId == auth.user!.uid)
+                                if (auth.user != null &&
+                                    item.userId == auth.user!.uid)
                                   MaterialButton(
                                     onPressed: () async {
                                       Navigator.push(

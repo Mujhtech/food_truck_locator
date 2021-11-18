@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/truck_model.dart';
@@ -61,6 +62,7 @@ class _TruckEditState extends State<TruckEdit> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final truck = watch(truckController);
+      final auth = watch(authControllerProvider);
       return Scaffold(
         key: homeScaffoldKey,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -81,7 +83,7 @@ class _TruckEditState extends State<TruckEdit> {
                       bannerImage = File(image.path);
                     });
                   }
-                  print(image);
+                  //print(image);
                 } catch (err) {
                   //print(err.toString());
                 }
@@ -290,9 +292,9 @@ class _TruckEditState extends State<TruckEdit> {
                                   lantitude = location.latitude;
                                   longitude = location.longitude;
                                 });
-                                print(location.latitude);
+                                //print(location.latitude);
                               } catch (err) {
-                                print(err.toString());
+                                //print(err.toString());
                               }
                             },
                             controller: location,
@@ -505,6 +507,7 @@ class _TruckEditState extends State<TruckEdit> {
                               await truck.uploadFile(featuredImage!);
                           final gallery = await truck.uploadFiles(galleries!);
                           if (!await truck.create(
+                              auth.user!.uid!,
                               title.text.trim(),
                               description.text.trim(),
                               location.text.trim(),
@@ -627,7 +630,9 @@ class _TruckEditState extends State<TruckEdit> {
                               },
                             );
                           }
-                        } catch (err) {}
+                        } catch (err) {
+                          //
+                        }
                       },
                       elevation: 0,
                       color: Commons.primaryColor,

@@ -120,12 +120,13 @@ class _TruckLookUpState extends State<TruckLookUp> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              
               Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      margin: const EdgeInsets.only(left: 10, top: 30),
+                      margin: const EdgeInsets.only(left: 10, top: 50),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100.0),
                         color: const Color(0xFFFFFFFF),

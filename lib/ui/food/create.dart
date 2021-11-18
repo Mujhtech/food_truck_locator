@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
@@ -463,6 +464,7 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
     return Consumer(builder: (context, watch, _) {
       final truck = watch(truckController);
       final food = watch(foodController);
+      final auth = watch(authControllerProvider);
       return Scaffold(
           backgroundColor: Colors.transparent,
           body: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -597,6 +599,7 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
                                     final gallery = await food
                                         .uploadFiles(widget.galleries);
                                     if (!await food.create(
+                                        auth.user!.uid!,
                                         selectedId!,
                                         widget.title,
                                         widget.about,

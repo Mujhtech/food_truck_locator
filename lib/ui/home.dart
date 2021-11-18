@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final auth = watch(authControllerProvider);
       return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: auth.user!.accountType! == 'merchant'
+        body: auth.user != null && auth.user!.accountType! == 'merchant'
             ? merchant[_selectedIndex]
             : user[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
           unselectedItemColor: const Color(0xFF656565),
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: auth.user!.accountType! == 'merchant'
+              icon: auth.user != null && auth.user!.accountType! == 'merchant'
                   ? SvgPicture.asset('assets/images/MyTruck.svg',
                       color: _selectedIndex == 0
                           ? Commons.primaryColor
@@ -83,12 +83,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? Commons.primaryColor
                           : const Color(0xFF656565),
                       semanticsLabel: 'Explore'),
-              label: auth.user!.accountType! == 'merchant'
+              label: auth.user != null && auth.user!.accountType! == 'merchant'
                   ? 'My Truck'
                   : 'Explore',
             ),
             BottomNavigationBarItem(
-              icon: auth.user!.accountType! == 'merchant'
+              icon: auth.user != null && auth.user!.accountType! == 'merchant'
                   ? SvgPicture.asset('assets/images/Food.svg',
                       color: _selectedIndex == 1
                           ? Commons.primaryColor
@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? Commons.primaryColor
                           : const Color(0xFF656565),
                       semanticsLabel: 'Near By'),
-              label: auth.user!.accountType! == 'merchant'
+              label: auth.user != null && auth.user!.accountType! == 'merchant'
                   ? 'Cuisines'
                   : 'Near By',
             ),
@@ -108,10 +108,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: _selectedIndex == 2
                       ? Commons.primaryColor
                       : const Color(0xFF656565),
-                  semanticsLabel: auth.user!.accountType! == 'merchant'
-                      ? 'Orders'
-                      : 'Cart'),
-              label: auth.user!.accountType! == 'merchant' ? 'Orders' : 'Cart',
+                  semanticsLabel:
+                      auth.user != null && auth.user!.accountType! == 'merchant'
+                          ? 'Orders'
+                          : 'Cart'),
+              label: auth.user != null && auth.user!.accountType! == 'merchant' ? 'Orders' : 'Cart',
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset('assets/images/User.svg',

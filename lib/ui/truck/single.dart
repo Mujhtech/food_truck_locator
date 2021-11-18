@@ -388,7 +388,8 @@ class _TruckSingleState extends State<TruckSingle>
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if (widget.item.userId == auth.user!.uid)
+                                if (auth.user != null &&
+                                    widget.item.userId == auth.user!.uid)
                                   MaterialButton(
                                     onPressed: () async {
                                       Navigator.push(

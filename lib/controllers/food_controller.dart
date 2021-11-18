@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
 import 'package:food_truck_locator/models/food_model.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
@@ -11,23 +10,19 @@ import 'package:food_truck_locator/repositories/food_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final foodController = ChangeNotifierProvider<FoodController>((ref) {
-  final user = ref.watch(authControllerProvider);
-  return FoodController(ref.read, user.user?.uid)..retrieve();
+  return FoodController(ref.read)..retrieve();
 });
 
 class FoodController extends ChangeNotifier {
   final Reader _read;
-  final String? _userId;
   String? error;
   List<FoodModel>? _foods;
   bool loading = false;
 
   List<FoodModel>? get foods => _foods;
 
-  FoodController(this._read, this._userId) {
-    if (_userId != null) {
-      retrieve();
-    }
+  FoodController(this._read) {
+    retrieve();
   }
 
   List<FoodModel> filterFoodByTruck(String id) {
@@ -50,7 +45,7 @@ class FoodController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
-      final items = await _read(foodRepositoryProvider).get(userId: _userId!);
+      final items = await _read(foodRepositoryProvider).get();
       _foods = items;
       loading = false;
       notifyListeners();
@@ -61,8 +56,15 @@ class FoodController extends ChangeNotifier {
     }
   }
 
-  Future<bool> create(String truckId, String title, String description, int price,
-      String featuredImage, String bannerImage, List<String> galleries) async {
+  Future<bool> create(
+      String userId,
+      String truckId,
+      String title,
+      String description,
+      int price,
+      String featuredImage,
+      String bannerImage,
+      List<String> galleries) async {
     try {
       loading = true;
       notifyListeners();
@@ -76,7 +78,7 @@ class FoodController extends ChangeNotifier {
           bannerImage: bannerImage,
           featuredImage: featuredImage,
           galleries: galleries,
-          userId: _userId);
+          userId: userId);
       await _read(foodRepositoryProvider).create(id: id, item: item);
       loading = false;
       retrieve();
@@ -90,7 +92,8 @@ class FoodController extends ChangeNotifier {
     }
   }
 
-  Future<bool> update(String title, String description, int price) async {
+  Future<bool> update(
+      String userId, String title, String description, int price) async {
     try {
       loading = true;
       notifyListeners();
@@ -102,7 +105,7 @@ class FoodController extends ChangeNotifier {
           description: description,
           bannerImage: '',
           featuredImage: '',
-          userId: _userId);
+          userId: userId);
       await _read(foodRepositoryProvider).update(id: id, item: item);
       loading = false;
       notifyListeners();

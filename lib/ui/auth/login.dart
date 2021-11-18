@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/auth/register.dart';
@@ -65,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               const SizedBox(
-                height: 30,
+                height: 20,
               ),
               MaterialButton(
                 onPressed: () async {},
@@ -110,6 +111,61 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Center(
                           child: Text(
                             'Continue with Google',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(color: Commons.whiteColor),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              MaterialButton(
+                onPressed: () async {},
+                elevation: 0,
+                color: Commons.whiteColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(
+                        color: Commons.primaryColor, width: 1)),
+                child: SizedBox(
+                  width: context.screenWidth(1),
+                  height: 53,
+                  child: Wrap(
+                    direction: Axis.vertical,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 80,
+                        decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(0),
+                              bottomLeft: Radius.circular(0),
+                            )),
+                        child: Center(
+                          child: SvgPicture.asset(
+                            'assets/images/Apple.svg',
+                            width: 30,
+                            height: 30,
+                            color: const Color(0xFF656565),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 70,
+                        width: context.screenWidth(0.675),
+                        decoration: const BoxDecoration(
+                            color: Commons.primaryColor,
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                            )),
+                        child: Center(
+                          child: Text(
+                            'Continue with Apple',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!
