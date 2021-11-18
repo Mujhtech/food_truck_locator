@@ -12,7 +12,6 @@ class BackendServices {
       final url = Uri.parse("$domain/stripe-init");
       var response =
           await http.post(url, headers: header, body: convert.jsonEncode(body));
-      print(response.body);
       if (response.statusCode == 200) {
         final body = convert.jsonDecode(response.body);
         return body["data"]['paymentIntent'];

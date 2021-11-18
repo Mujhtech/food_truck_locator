@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class FoodModel {
   String? id;
   String? userId;

@@ -733,7 +733,9 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
                                         },
                                       );
                                     }
-                                  } catch (err) {}
+                                  } catch (err) {
+                                    //
+                                  }
                                 },
                                 elevation: 0,
                                 color: Commons.primaryColor,

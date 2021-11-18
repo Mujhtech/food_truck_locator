@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
+import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/event.dart';
 import 'package:food_truck_locator/ui/food/create.dart';
@@ -18,6 +19,7 @@ class CuisinesScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final food = useProvider(foodController);
+    final truck = useProvider(truckController);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -71,7 +73,7 @@ class CuisinesScreen extends HookWidget {
                             transitionBackgroundColor: Colors.transparent,
                             context: context,
                             builder: (context) => SearchModal(
-                                  trucks: [],
+                                  trucks: truck.trucks!,
                                 )),
                         child: Container(
                             height: 47,

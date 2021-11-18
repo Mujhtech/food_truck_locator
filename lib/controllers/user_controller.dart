@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:food_truck_locator/controllers/auth_controller.dart';
-import 'package:food_truck_locator/extensions/firebase_extension.dart';
-import 'package:food_truck_locator/models/cart_model.dart';
-import 'package:food_truck_locator/models/order_model.dart';
 import 'package:food_truck_locator/models/user_model.dart';
-import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
-import 'package:food_truck_locator/repositories/order_repository.dart';
 import 'package:food_truck_locator/repositories/user_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final orderControllerProvider = ChangeNotifierProvider<UserController>((ref) {
+final userControllerProvider = ChangeNotifierProvider<UserController>((ref) {
   return UserController(ref.read)..retrieve();
 });
 

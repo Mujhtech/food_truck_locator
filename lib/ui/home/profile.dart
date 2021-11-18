@@ -22,8 +22,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final auth = watch(authControllerProvider);
-      email.text = auth.user!.email!;
-      phone.text = auth.user!.phoneNumber!;
+      if (auth.user != null) {
+        email.text = auth.user!.email!;
+        phone.text = auth.user!.phoneNumber!;
+      }
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
@@ -190,6 +192,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       autofocus: false,
                       obscureText: false,
                       readOnly: true,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        await auth.signOut();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        width: context.screenWidth(1),
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(4)),
+                            border: Border.all(
+                                color: const Color(0xFFCCCCCC),
+                                width: 1,
+                                style: BorderStyle.solid)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Logout',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(fontSize: 14),
+                            ),
+                            const Icon(Icons.logout,
+                                color: Commons.primaryColor)
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

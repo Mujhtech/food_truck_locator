@@ -207,12 +207,14 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  void signOut() async {
+  Future<void> signOut() async {
     await _read(authRepositoryProvider).signOut();
   }
 
   Future<void> _onAuthStateChanged(User? firebaseUser) async {
     if (firebaseUser == null) {
+      _fsUser = null;
+      _user = null;
       _status = Status.unauthenticated;
       notifyListeners();
     } else {
@@ -258,6 +260,4 @@ class AuthController extends ChangeNotifier {
       return false;
     }
   }
-
-  
 }
