@@ -8,8 +8,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 abstract class BaseOrderRepository {
   Future<List<OrderModel>> getAll();
   Future<void> create({required String id, required OrderModel item});
-  Future<void> remove({required String userId, required String id});
-  Future<void> update({required String id, required OrderModel item});
+  Future<void> update({required String id, required String status});
+  Future<void> feedback(
+      {required String id, required String comment, required int rating});
 }
 
 final orderRepositoryProvider =
@@ -22,10 +23,7 @@ class OrderRepository implements BaseOrderRepository {
   @override
   Future<void> create({required String id, required OrderModel item}) async {
     try {
-      await _read(firebaseFirestoreProvider)
-          .order()
-          .doc(id)
-          .set(item.toJson());
+      await _read(firebaseFirestoreProvider).order().doc(id).set(item.toJson());
     } on FirebaseException catch (e) {
       throw CustomException(message: e.message);
     }
@@ -48,21 +46,27 @@ class OrderRepository implements BaseOrderRepository {
   }
 
   @override
-  Future<void> remove({required String userId, required String id}) async {
+  Future<void> update({required String id, required String status}) async {
     try {
-      await _read(firebaseFirestoreProvider).order().doc(id).delete();
+      await _read(firebaseFirestoreProvider)
+          .order()
+          .doc(id)
+          .update({'status': status});
     } on FirebaseException catch (e) {
       throw CustomException(message: e.message);
     }
   }
 
   @override
-  Future<void> update({required String id, required OrderModel item}) async {
+  Future<void> feedback(
+      {required String id,
+      required String comment,
+      required int rating}) async {
     try {
       await _read(firebaseFirestoreProvider)
           .order()
           .doc(id)
-          .update(item.toDocument());
+          .update({'rating': rating, 'comment': comment});
     } on FirebaseException catch (e) {
       throw CustomException(message: e.message);
     }

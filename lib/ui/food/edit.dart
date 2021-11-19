@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/connectivity_controller.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/food_model.dart';
@@ -56,6 +57,7 @@ class _FoodEditState extends State<FoodEdit> {
     return Consumer(builder: (context, watch, _) {
       final food = watch(foodController);
       final auth = watch(authControllerProvider);
+      final connect = watch(connectivityControllerProvider);
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
@@ -394,6 +396,13 @@ class _FoodEditState extends State<FoodEdit> {
                         MaterialButton(
                           onPressed: () async {
                             if (!formKey.currentState!.validate()) {
+                              return;
+                            }
+                            if (!connect.connectivityStatus) {
+                              const snackBar = SnackBar(
+                                  content: Text('No internet connection'));
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
                               return;
                             }
                             if (widget.item.galleries!.isEmpty) {

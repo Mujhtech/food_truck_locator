@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/connectivity_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
@@ -22,6 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final auth = watch(authControllerProvider);
+      final connect = watch(connectivityControllerProvider);
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
@@ -258,6 +260,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     MaterialButton(
                       onPressed: () async {
                         if (!formKey.currentState!.validate()) {
+                          return;
+                        }
+                        if (!connect.connectivityStatus) {
+                          const snackBar =
+                              SnackBar(content: Text('No internet connection'));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           return;
                         }
                         if (!await context.read(authControllerProvider).signUp(

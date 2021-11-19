@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/connectivity_controller.dart';
 import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/auth/register.dart';
@@ -46,6 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Consumer(builder: (context, watch, _) {
       final auth = watch(authControllerProvider);
       final user = watch(userControllerProvider);
+      final connect = watch(connectivityControllerProvider);
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
@@ -181,109 +184,111 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              MaterialButton(
-                onPressed: () async {
-                  final rawNonce = generateNonce();
-                  final nonce = sha256ofString(rawNonce);
-                  try {
-                    final credential =
-                        await SignInWithApple.getAppleIDCredential(
-                      scopes: [
-                        AppleIDAuthorizationScopes.email,
-                        AppleIDAuthorizationScopes.fullName,
+              if (Platform.isIOS)
+                MaterialButton(
+                  onPressed: () async {
+                    final rawNonce = generateNonce();
+                    final nonce = sha256ofString(rawNonce);
+                    try {
+                      final credential =
+                          await SignInWithApple.getAppleIDCredential(
+                        scopes: [
+                          AppleIDAuthorizationScopes.email,
+                          AppleIDAuthorizationScopes.fullName,
+                        ],
+                        nonce: nonce,
+                      );
+
+                      final oauthCredential =
+                          OAuthProvider("apple.com").credential(
+                        idToken: credential.identityToken,
+                        rawNonce: rawNonce,
+                      );
+
+                      if (credential.email == null) {
+                        const snackBar = SnackBar(
+                            content:
+                                Text('Enable share with email to continue'));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        return;
+                      }
+
+                      if (user.searchSocialUserbyEmail(credential.email!)) {
+                        const snackBar = SnackBar(
+                            content: Text(
+                                'Email Address has been used by another person'));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        return;
+                      }
+
+                      if (!await auth.appleSignIn(oauthCredential)) {
+                        final snackBar = SnackBar(content: Text(auth.error!));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        return;
+                      } else {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomeScreen()),
+                            (Route<dynamic> route) => false);
+                      }
+                    } catch (err) {
+                      //print(err.toString());
+                    }
+                  },
+                  elevation: 0,
+                  color: Commons.whiteColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(
+                          color: Commons.primaryColor, width: 1)),
+                  child: SizedBox(
+                    width: context.screenWidth(1),
+                    height: 53,
+                    child: Wrap(
+                      direction: Axis.vertical,
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 80,
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                bottomLeft: Radius.circular(0),
+                              )),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              'assets/images/Apple.svg',
+                              width: 30,
+                              height: 30,
+                              color: const Color(0xFF656565),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 70,
+                          width: context.screenWidth(0.675),
+                          decoration: const BoxDecoration(
+                              color: Commons.primaryColor,
+                              borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              )),
+                          child: Center(
+                            child: Text(
+                              'Continue with Apple',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(color: Commons.whiteColor),
+                            ),
+                          ),
+                        ),
                       ],
-                      nonce: nonce,
-                    );
-
-                    final oauthCredential =
-                        OAuthProvider("apple.com").credential(
-                      idToken: credential.identityToken,
-                      rawNonce: rawNonce,
-                    );
-
-                    if (credential.email == null) {
-                      const snackBar = SnackBar(
-                          content: Text('Enable share with email to continue'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    }
-
-                    if (user.searchSocialUserbyEmail(credential.email!)) {
-                      const snackBar = SnackBar(
-                          content: Text(
-                              'Email Address has been used by another person'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    }
-
-                    if (!await auth.appleSignIn(oauthCredential)) {
-                      final snackBar = SnackBar(content: Text(auth.error!));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    } else {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen()),
-                          (Route<dynamic> route) => false);
-                    }
-                  } catch (err) {
-                    //print(err.toString());
-                  }
-                },
-                elevation: 0,
-                color: Commons.whiteColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: const BorderSide(
-                        color: Commons.primaryColor, width: 1)),
-                child: SizedBox(
-                  width: context.screenWidth(1),
-                  height: 53,
-                  child: Wrap(
-                    direction: Axis.vertical,
-                    children: [
-                      Container(
-                        height: 50,
-                        width: 80,
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(0),
-                              bottomLeft: Radius.circular(0),
-                            )),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/images/Apple.svg',
-                            width: 30,
-                            height: 30,
-                            color: const Color(0xFF656565),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 70,
-                        width: context.screenWidth(0.675),
-                        decoration: const BoxDecoration(
-                            color: Commons.primaryColor,
-                            borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(10),
-                              topRight: Radius.circular(10),
-                            )),
-                        child: Center(
-                          child: Text(
-                            'Continue with Apple',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(color: Commons.whiteColor),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
               const SizedBox(
                 height: 20,
               ),
@@ -414,6 +419,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     MaterialButton(
                       onPressed: () async {
                         if (!formKey.currentState!.validate()) {
+                          return;
+                        }
+                        if (!connect.connectivityStatus) {
+                          const snackBar =
+                              SnackBar(content: Text('No internet connection'));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           return;
                         }
                         if (!await context

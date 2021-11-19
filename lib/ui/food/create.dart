@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/connectivity_controller.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
@@ -465,6 +466,7 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
       final truck = watch(truckController);
       final food = watch(foodController);
       final auth = watch(authControllerProvider);
+      final connect = watch(connectivityControllerProvider);
       return Scaffold(
           backgroundColor: Colors.transparent,
           body: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -591,6 +593,14 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
                               MaterialButton(
                                 onPressed: () async {
                                   if (selectedId == null) {
+                                    return;
+                                  }
+                                  if (!connect.connectivityStatus) {
+                                    const snackBar = SnackBar(
+                                        content:
+                                            Text('No internet connection'));
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
                                     return;
                                   }
                                   try {

@@ -103,4 +103,54 @@ class OrderController extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> update(
+      String id, String status, String userId, String foodOwnerId) async {
+    try {
+      loading = true;
+      notifyListeners();
+      final user = _read(userControllerProvider).filterUserbyId(userId);
+      // final owner =
+      //     _read(userControllerProvider).filterUserbyId(data.item!.userId!);
+      if (status == "Canceled") {
+        await backendServices.sendNotification(
+            user.fcmToken!, 'Order', 'Your order has been canceled');
+      }
+      if (status == "Completed") {
+        await backendServices.sendNotification(
+            user.fcmToken!, 'Order', 'Your order has been delivered');
+      }
+
+      // await backendServices.sendNotification(owner.fcmToken!, 'Order',
+      //     '${user.fullName} just ordered ${data.item!.title!}');
+      await _read(orderRepositoryProvider).update(id: id, status: status);
+      loading = false;
+      retrieve();
+      notifyListeners();
+      return true;
+    } on CustomException catch (e) {
+      error = e.message;
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> addFeedback(String id, String comment, int rating) async {
+    try {
+      loading = true;
+      notifyListeners();
+      await _read(orderRepositoryProvider)
+          .feedback(id: id, comment: comment, rating: rating);
+      loading = false;
+      retrieve();
+      notifyListeners();
+      return true;
+    } on CustomException catch (e) {
+      error = e.message;
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
 }

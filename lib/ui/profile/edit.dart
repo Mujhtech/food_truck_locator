@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/connectivity_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/user_profile_image.dart';
@@ -26,6 +27,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final auth = watch(authControllerProvider);
+      final connect = watch(connectivityControllerProvider);
       fullname.text = auth.user!.fullName!;
       email.text = auth.user!.email!;
       address.text = auth.user!.address!;
@@ -460,6 +462,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     elevation: 0,
                     onPressed: () async {
                       if (!formKey.currentState!.validate()) {
+                        return;
+                      }
+                      if (!connect.connectivityStatus) {
+                        const snackBar =
+                            SnackBar(content: Text('No internet connection'));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         return;
                       }
                       if (!await auth.updateUser(
