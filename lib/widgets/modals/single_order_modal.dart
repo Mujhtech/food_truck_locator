@@ -1,23 +1,30 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
-import 'package:food_truck_locator/controllers/order_controller.dart';
+import 'package:food_truck_locator/controllers/message_controller.dart';
 import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/order_model.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
-class SingleOrderModal extends StatelessWidget {
+class SingleOrderModal extends StatefulWidget {
   final OrderModel item;
   const SingleOrderModal({Key? key, required this.item}) : super(key: key);
 
   @override
+  State<SingleOrderModal> createState() => _SingleOrderModalState();
+}
+
+class _SingleOrderModalState extends State<SingleOrderModal> {
+  TextEditingController messageInput = TextEditingController();
+  @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
-      final order = watch(orderControllerProvider);
       final food = watch(foodController);
       final user = watch(userControllerProvider);
+      final message = watch(messageControllerProvider);
       return Scaffold(
           backgroundColor: Colors.transparent,
           body: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -57,8 +64,9 @@ class SingleOrderModal extends StatelessWidget {
                             topLeft: Radius.circular(16),
                             topRight: Radius.circular(16)),
                         image: DecorationImage(
-                          image: CachedNetworkImageProvider(
-                              food.filterFoodbyId(item.foodId!).bannerImage!),
+                          image: CachedNetworkImageProvider(food
+                              .filterFoodbyId(widget.item.foodId!)
+                              .bannerImage!),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -93,7 +101,7 @@ class SingleOrderModal extends StatelessWidget {
                     child: ListView(children: [
                       Center(
                         child: Text(
-                          food.filterFoodbyId(item.foodId!).title!,
+                          food.filterFoodbyId(widget.item.foodId!).title!,
                           style: Theme.of(context)
                               .textTheme
                               .headline1!
@@ -102,6 +110,15 @@ class SingleOrderModal extends StatelessWidget {
                                   fontWeight: FontWeight.w700),
                         ),
                       ),
+                      const SizedBox(height: 10),
+                      Center(
+                        child: Text('${widget.item.qty} QTY',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(fontWeight: FontWeight.w600)),
+                      ),
+                      const SizedBox(height: 10),
                       Container(
                         padding: const EdgeInsets.all(8),
                         color: Commons.primaryColor.withOpacity(0.1),
@@ -114,7 +131,7 @@ class SingleOrderModal extends StatelessWidget {
                             const SizedBox(
                               width: 10,
                             ),
-                            Text(item.status!,
+                            Text(widget.item.status!,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText2!
@@ -123,6 +140,64 @@ class SingleOrderModal extends StatelessWidget {
                                         fontWeight: FontWeight.w600)),
                           ],
                         ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        children: [
+                          Row(children: [
+                            Text(
+                              'Feedback',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Icon(
+                              Icons.thumb_up_alt,
+                              color: Colors.black,
+                              size: 20,
+                            )
+                          ]),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            color: const Color(0xFFFBFBFB),
+                            height: 100,
+                            padding: const EdgeInsets.all(10),
+                            width: context.screenWidth(1),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                widget.item.comment != null &&
+                                        widget.item.comment!.isNotEmpty
+                                    ? Text(widget.item.comment!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2!
+                                            .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ))
+                                    : Text('No feedback yet',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2!
+                                            .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            )),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(
                         height: 20,
@@ -159,7 +234,9 @@ class SingleOrderModal extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                    user.filterUserbyId(item.userId!).fullName!,
+                                    user
+                                        .filterUserbyId(widget.item.userId!)
+                                        .fullName!,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText2!
@@ -170,10 +247,12 @@ class SingleOrderModal extends StatelessWidget {
                                   height: 10,
                                 ),
                                 Text(
-                                    user.filterUserbyId(item.userId!).email! +
+                                    user
+                                            .filterUserbyId(widget.item.userId!)
+                                            .email! +
                                         '\n' +
                                         user
-                                            .filterUserbyId(item.userId!)
+                                            .filterUserbyId(widget.item.userId!)
                                             .phoneNumber!,
                                     style:
                                         Theme.of(context).textTheme.bodyText2),
@@ -181,13 +260,13 @@ class SingleOrderModal extends StatelessWidget {
                                   height: 10,
                                 ),
                                 Text(
-                                    item.shippingPostalCode! +
+                                    widget.item.shippingPostalCode! +
                                         ', ' +
-                                        item.shippingAddress! +
+                                        widget.item.shippingAddress! +
                                         ', \n' +
-                                        item.shippingCity! +
+                                        widget.item.shippingCity! +
                                         ' ' +
-                                        item.shippingCountry!,
+                                        widget.item.shippingCountry!,
                                     style:
                                         Theme.of(context).textTheme.bodyText2)
                               ],
@@ -198,9 +277,71 @@ class SingleOrderModal extends StatelessWidget {
                       const SizedBox(
                         height: 20,
                       ),
+                      Row(children: [
+                        Text(
+                          'Messages',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Icon(
+                          Icons.forum,
+                          color: Colors.black,
+                          size: 20,
+                        )
+                      ]),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      if (message
+                          .filterMessageByOrderId(widget.item.id!)
+                          .isNotEmpty)
+                        ...message.filterMessageByOrderId(widget.item.id!).map(
+                            (e) => Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        user
+                                            .filterUserbyId(e.userId!)
+                                            .fullName!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
+                                      ),
+                                      Container(
+                                          color: const Color(0xFFFBFBFB),
+                                          height: 40,
+                                          padding: const EdgeInsets.all(10),
+                                          width: context.screenWidth(1),
+                                          child: Text(
+                                            e.message!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText2,
+                                          )),
+                                      Text(
+                                        DateFormat('dd-MM-yyyy – kk:mm')
+                                            .format(e.createdAt!),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                    ])),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Column(
                         children: [
                           TextFormField(
+                            controller: messageInput,
                             cursorColor: Commons.primaryColor,
                             keyboardType: TextInputType.text,
                             style: Theme.of(context)
@@ -227,8 +368,19 @@ class SingleOrderModal extends StatelessWidget {
                                   .inputDecorationTheme
                                   .fillColor,
                               suffixIcon: GestureDetector(
-                                onTap: () {
-                                  print(0);
+                                onTap: () async {
+                                  if (messageInput.text.trim().isEmpty) {
+                                    return;
+                                  }
+                                  if (!await message.create(
+                                      widget.item.id!,
+                                      widget.item.foodOwnerId!,
+                                      widget.item.userId!,
+                                      messageInput.text.trim())) {
+                                    return;
+                                  }
+                                  messageInput.text = '';
+                                  //print(0);
                                 },
                                 child: Container(
                                     margin: const EdgeInsets.only(right: 4),
