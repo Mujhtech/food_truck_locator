@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
@@ -33,7 +32,7 @@ class _TruckEditState extends State<TruckEdit> {
   File? bannerImage;
   File? featuredImage;
   List<File>? galleries;
-  double? lantitude, longitude;
+  double? latitude, longitude;
 
   @override
   void initState() {
@@ -42,6 +41,8 @@ class _TruckEditState extends State<TruckEdit> {
     location.text = widget.item.location!;
     website.text = widget.item.website!;
     description.text = widget.item.description!;
+    latitude = double.parse(widget.item.latitude!);
+    longitude = double.parse(widget.item.longitude!);
   }
 
   Future<void> updateGallery(List<XFile> images) async {
@@ -289,7 +290,7 @@ class _TruckEditState extends State<TruckEdit> {
                                     await locationFromAddress(value);
                                 Location location = locations[0];
                                 setState(() {
-                                  lantitude = location.latitude;
+                                  latitude = location.latitude;
                                   longitude = location.longitude;
                                 });
                                 //print(location.latitude);
@@ -451,7 +452,7 @@ class _TruckEditState extends State<TruckEdit> {
                                     child: Text(
                                       galleries != null && galleries!.isNotEmpty
                                           ? '${galleries!.length} images selected'
-                                          : 'Browse',
+                                          : '${widget.item.galleries!.length} Selected, Remove & Add',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1!
@@ -496,27 +497,39 @@ class _TruckEditState extends State<TruckEdit> {
                         if (!formKey.currentState!.validate()) {
                           return;
                         }
-                        if (galleries!.length < 2) {
+                        if (widget.item.galleries!.isEmpty) {
                           const snackBar = SnackBar(
                               content: Text('Please minimum of 2 images'));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           return;
                         }
                         try {
-                          final featured =
-                              await truck.uploadFile(featuredImage!);
-                          final gallery = await truck.uploadFiles(galleries!);
-                          if (!await truck.create(
+                          String featured = widget.item.featuredImage!;
+                          List<String> gallery = widget.item.galleries!;
+
+                          if (featuredImage != null &&
+                              featuredImage!.path.isNotEmpty) {
+                            featured = await truck.uploadFile(featuredImage!);
+                          }
+                          if (galleries != null && galleries!.isNotEmpty) {
+                            gallery = await truck.uploadFiles(galleries!);
+                          }
+                          if (!await truck.update(
+                              widget.item.id!,
                               auth.user!.uid!,
                               title.text.trim(),
                               description.text.trim(),
                               location.text.trim(),
                               website.text.trim(),
-                              lantitude!,
+                              latitude!,
                               longitude!,
                               featured,
                               gallery[0],
                               gallery)) {
+                            final snackBar =
+                                SnackBar(content: Text(truck.error!));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
                             return;
                           } else {
                             showGeneralDialog(
@@ -573,7 +586,7 @@ class _TruckEditState extends State<TruckEdit> {
                                         ),
                                         Center(
                                           child: Text(
-                                            'Your truck has been addedd\nsuccessfully',
+                                            'Your truck has been updated\nsuccessfully',
                                             textAlign: TextAlign.center,
                                             style: Theme.of(context)
                                                 .textTheme

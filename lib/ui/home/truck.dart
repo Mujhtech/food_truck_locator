@@ -99,7 +99,7 @@ class TruckScreen extends HookWidget {
                   )
                 ],
               ),
-              if (truck.trucks != null && truck.trucks!.isNotEmpty)
+              if (truck.filterTruckByUser(auth.user!.uid!).isNotEmpty)
                 Flexible(
                   fit: FlexFit.loose,
                   child: ListView.separated(
@@ -111,12 +111,17 @@ class TruckScreen extends HookWidget {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => TruckSingle(
-                                            item: truck.trucks![index],
+                                            item: truck.filterTruckByUser(
+                                                auth.user!.uid!)[index],
                                           )));
                             },
                             child: TruckCard(
-                              title: truck.trucks![index].title!,
-                              bannerImage: truck.trucks![index].bannerImage!,
+                              title: truck
+                                  .filterTruckByUser(auth.user!.uid!)[index]
+                                  .title!,
+                              bannerImage: truck
+                                  .filterTruckByUser(auth.user!.uid!)[index]
+                                  .bannerImage!,
                               width: 1,
                             ));
                       },
@@ -125,7 +130,8 @@ class TruckScreen extends HookWidget {
                           height: 20,
                         );
                       },
-                      itemCount: truck.trucks!.length),
+                      itemCount:
+                          truck.filterTruckByUser(auth.user!.uid!).length),
                 )
               else
                 Center(

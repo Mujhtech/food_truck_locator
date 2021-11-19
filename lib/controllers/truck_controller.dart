@@ -28,6 +28,18 @@ class TruckController extends ChangeNotifier {
     return _trucks!.firstWhere((truck) => truck.id! == id);
   }
 
+  List<TruckModel> filterTruckByUser(String userId) {
+    List<TruckModel> filterTruck = [];
+    if (_trucks != null && _trucks!.isNotEmpty) {
+      for (final data in _trucks!) {
+        if (data.userId == userId) {
+          filterTruck.add(data);
+        }
+      }
+    }
+    return filterTruck;
+  }
+
   Future<void> retrieve() async {
     try {
       loading = true;
@@ -86,6 +98,7 @@ class TruckController extends ChangeNotifier {
   }
 
   Future<bool> update(
+      String id,
       String userId,
       String title,
       String description,
@@ -99,7 +112,6 @@ class TruckController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
-      String id = _read(firebaseFirestoreProvider).truck().doc().id.toString();
       TruckModel item = TruckModel(
           id: id,
           title: title,
@@ -116,7 +128,7 @@ class TruckController extends ChangeNotifier {
           createdAt: DateTime.now());
       await _read(truckRepositoryProvider).create(id: id, item: item);
       loading = false;
-      retrieve();
+      await retrieve();
       notifyListeners();
       return true;
     } on CustomException catch (e) {

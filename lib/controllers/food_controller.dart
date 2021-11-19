@@ -25,6 +25,18 @@ class FoodController extends ChangeNotifier {
     retrieve();
   }
 
+  List<FoodModel> filterFoodByUser(String userId) {
+    List<FoodModel> filterFood = [];
+    if (_foods != null && foods!.isNotEmpty) {
+      for (final data in _foods!) {
+        if (data.userId == userId) {
+          filterFood.add(data);
+        }
+      }
+    }
+    return filterFood;
+  }
+
   List<FoodModel> filterFoodByTruck(String id) {
     List<FoodModel> filterFood = [];
     if (_foods != null && foods!.isNotEmpty) {
@@ -78,7 +90,8 @@ class FoodController extends ChangeNotifier {
           bannerImage: bannerImage,
           featuredImage: featuredImage,
           galleries: galleries,
-          userId: userId, createdAt: DateTime.now());
+          userId: userId,
+          createdAt: DateTime.now());
       await _read(foodRepositoryProvider).create(id: id, item: item);
       loading = false;
       retrieve();
@@ -93,6 +106,7 @@ class FoodController extends ChangeNotifier {
   }
 
   Future<bool> update(
+      String id,
       String userId,
       String truckId,
       String title,
@@ -104,7 +118,6 @@ class FoodController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
-      String id = _read(firebaseFirestoreProvider).food().doc().id.toString();
       FoodModel item = FoodModel(
           truckId: truckId,
           amount: price,
@@ -114,7 +127,8 @@ class FoodController extends ChangeNotifier {
           bannerImage: bannerImage,
           featuredImage: featuredImage,
           galleries: galleries,
-          userId: userId, createdAt: DateTime.now());
+          userId: userId,
+          createdAt: DateTime.now());
       await _read(foodRepositoryProvider).update(id: id, item: item);
       loading = false;
       retrieve();
@@ -127,7 +141,6 @@ class FoodController extends ChangeNotifier {
       return false;
     }
   }
-
 
   Future<List<String>> uploadFiles(List<File> _images) async {
     loading = true;
@@ -157,9 +170,8 @@ class FoodController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
-        Reference ref1 =
-            _read(firebaseStorageProvider).refFromURL(url);
-        await ref1.delete();
+      Reference ref1 = _read(firebaseStorageProvider).refFromURL(url);
+      await ref1.delete();
       loading = false;
       notifyListeners();
       return true;

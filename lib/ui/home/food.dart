@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
@@ -20,6 +21,7 @@ class CuisinesScreen extends HookWidget {
   Widget build(BuildContext context) {
     final food = useProvider(foodController);
     final truck = useProvider(truckController);
+    final auth = useProvider(authControllerProvider);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -95,12 +97,12 @@ class CuisinesScreen extends HookWidget {
               const SizedBox(
                 height: 10,
               ),
-              if (food.foods != null && food.foods!.isNotEmpty)
+              if (food.filterFoodByUser(auth.user!.uid!).isNotEmpty)
                 Flexible(
                   fit: FlexFit.loose,
                   child: GridView.builder(
                       padding: const EdgeInsets.only(bottom: 10.0, top: 5.0),
-                      itemCount: food.foods!.length,
+                      itemCount: food.filterFoodByUser(auth.user!.uid!).length,
                       scrollDirection: Axis.vertical,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -115,13 +117,18 @@ class CuisinesScreen extends HookWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        FoodSingle(item: food.foods![index])));
+                                    builder: (context) => FoodSingle(
+                                        item: food.filterFoodByUser(
+                                            auth.user!.uid!)[index])));
                           },
                           child: FoodCard(
                             page: 1,
-                            title: food.foods![index].title!,
-                            bannerImage: food.foods![index].bannerImage!,
+                            title: food
+                                .filterFoodByUser(auth.user!.uid!)[index]
+                                .title!,
+                            bannerImage: food
+                                .filterFoodByUser(auth.user!.uid!)[index]
+                                .bannerImage!,
                           ),
                         );
                       }),
