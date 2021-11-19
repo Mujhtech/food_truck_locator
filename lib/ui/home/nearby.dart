@@ -1,8 +1,12 @@
+import 'dart:math';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/share_controller.dart';
 import 'package:food_truck_locator/controllers/truck_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
+import 'package:food_truck_locator/models/truck_model.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:food_truck_locator/widgets/modals/book_modal.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,9 +29,9 @@ class _NearbyScreenState extends State<NearbyScreen> {
     mapController = controller;
   }
 
-  Set<Marker> markers = {};
-
   bool mapPermission = false;
+
+  TruckModel? myTruck;
 
   @override
   void initState() {
@@ -40,6 +44,21 @@ class _NearbyScreenState extends State<NearbyScreen> {
         customIcon = d;
       });
     });
+  }
+
+  void onClickMarker(TruckModel data) {
+    setState(() {
+      myTruck = data;
+    });
+  }
+
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
   }
 
   Future<Position> _currentLocation() async {
@@ -80,7 +99,7 @@ class _NearbyScreenState extends State<NearbyScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
-      //final truck = watch(truckController);
+      final truck = watch(truckController);
       final share = watch(shareControllerProvider);
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -107,12 +126,12 @@ class _NearbyScreenState extends State<NearbyScreen> {
                                 target: _userLocation,
                                 zoom: 12,
                               ),
-                              markers: markers
+                              markers: truck.maps(customIcon, onClickMarker)
                                 ..add(Marker(
-                                    markerId: const MarkerId("User Location"),
+                                    markerId: const MarkerId("My Location"),
                                     icon: customIcon,
-                                    infoWindow: const InfoWindow(
-                                        title: "User Location"),
+                                    infoWindow:
+                                        const InfoWindow(title: "My Location"),
                                     position: _userLocation)),
                             );
                           }
@@ -127,125 +146,146 @@ class _NearbyScreenState extends State<NearbyScreen> {
                           ),
                         );
                       }),
-                  Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        width: context.screenWidth(1),
-                        height: 220,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(30),
-                                topRight: Radius.circular(30))),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(20),
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xFFFFFFFF),
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: const Color(0xFF000000)
-                                                .withOpacity(0.05),
-                                            spreadRadius: 0,
-                                            blurRadius: 5,
-                                            offset: const Offset(0, 0),
-                                          ),
-                                        ]),
-                                    width: 74,
-                                    height: 74,
-                                    child: SvgPicture.asset(
-                                      'assets/images/User.svg',
-                                      width: 100,
-                                      height: 100,
-                                      color: const Color(0xFF656565),
+                  if (myTruck != null)
+                    Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          width: context.screenWidth(1),
+                          height: 220,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(30),
+                                  topRight: Radius.circular(30))),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Row(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                          color: const Color(0xFFFFFFFF),
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0xFF000000)
+                                                  .withOpacity(0.05),
+                                              spreadRadius: 0,
+                                              blurRadius: 5,
+                                              offset: const Offset(0, 0),
+                                            ),
+                                          ]),
+                                      width: 74,
+                                      height: 74,
+                                      child: myTruck!.featuredImage!.isNotEmpty
+                                          ? Container(
+                                              width: 100,
+                                              height: 100,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(8)),
+                                                  image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: CachedNetworkImageProvider(
+                                                          myTruck!
+                                                              .featuredImage!))),
+                                            )
+                                          : SvgPicture.asset(
+                                              'assets/images/User.svg',
+                                              width: 100,
+                                              height: 100,
+                                              color: const Color(0xFF656565),
+                                            ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'widget.item.title!',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w600),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        'widget.item.location!',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        '5km',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText2!
-                                            .copyWith(
-                                                fontSize: 14,
-                                                color: Commons.primaryColor),
-                                      ),
-                                    ],
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          myTruck!.title!,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          myTruck!.location!,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          '${calculateDistance(double.parse(myTruck!.latitude!), double.parse(myTruck!.longitude!), double.parse(myTruck!.latitude!), double.parse(myTruck!.longitude!))}km Away',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText2!
+                                              .copyWith(
+                                                  fontSize: 14,
+                                                  color: Commons.primaryColor),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              MaterialButton(
+                                onPressed: () => showCupertinoModalBottomSheet(
+                                  elevation: 0,
+                                  expand: true,
+                                  shadow: const BoxShadow(
+                                      color: Colors.transparent),
+                                  backgroundColor: Colors.transparent,
+                                  transitionBackgroundColor: Colors.transparent,
+                                  context: context,
+                                  builder: (context) => BookModal(
+                                    item: myTruck!,
+                                    km: calculateDistance(
+                                        double.parse(myTruck!.latitude!),
+                                        double.parse(myTruck!.longitude!),
+                                        double.parse(myTruck!.latitude!),
+                                        double.parse(myTruck!.longitude!)),
                                   ),
                                 ),
-                              ],
-                            ),
-                            MaterialButton(
-                              onPressed: () => print(0),
-                              // onPressed: () => showCupertinoModalBottomSheet(
-                              //   elevation: 0,
-                              //   expand: true,
-                              //   backgroundColor: Colors.transparent,
-                              //   transitionBackgroundColor: Colors.transparent,
-                              //   context: context,
-                              //   builder: (context) => BookModal(
-                              //     item: widget.item,
-                              //   ),
-                              // ),
-                              elevation: 0,
-                              color: Commons.primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Container(
-                                width: context.screenWidth(1),
-                                height: 53,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'Book this Truck',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .copyWith(color: Commons.whiteColor),
+                                elevation: 0,
+                                color: Commons.primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Container(
+                                  width: context.screenWidth(1),
+                                  height: 53,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Book this Truck',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(color: Commons.whiteColor),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ))
+                            ],
+                          ),
+                        ))
                 ],
               )
             : SafeArea(

@@ -6,6 +6,7 @@ import 'package:food_truck_locator/models/truck_model.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
 import 'package:food_truck_locator/repositories/truck_repository.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final truckController = ChangeNotifierProvider<TruckController>((ref) {
@@ -26,6 +27,28 @@ class TruckController extends ChangeNotifier {
 
   TruckModel filterTruckbyId(String id) {
     return _trucks!.firstWhere((truck) => truck.id! == id);
+  }
+
+  Set<Marker> maps(customIcon, onClickMarker) {
+    Set<Marker> trucks = {};
+
+    if (_trucks!.isNotEmpty) {
+      Set<Marker> datas = _trucks!
+          .map((e) => Marker(
+              onTap: () {
+                onClickMarker(e);
+              },
+              markerId: MarkerId(e.title!),
+              icon: customIcon,
+              infoWindow: InfoWindow(title: e.title),
+              position: LatLng(
+                  double.parse(e.latitude!), double.parse(e.longitude!))))
+          .toSet();
+
+      trucks.addAll(datas);
+    }
+
+    return trucks;
   }
 
   List<TruckModel> filterTruckByUser(String userId) {
