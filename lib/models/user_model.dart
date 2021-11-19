@@ -13,6 +13,7 @@ class UserModel {
   DateTime? planExpiredDate;
   DateTime? planStartDate;
   String? planName;
+  String? loginType;
 
   UserModel(
       {this.email,
@@ -26,6 +27,7 @@ class UserModel {
       this.lastLoggedIn,
       this.planExpiredDate,
       this.planName,
+      this.loginType,
       this.planStartDate});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -39,6 +41,7 @@ class UserModel {
         address: json['contact_address'],
         profileImage: json['profile_picture'],
         planName: json['plan_name'],
+        loginType: json['login_type'],
         planExpiredDate: (json['plan_expired_date'] as Timestamp).toDate(),
         planStartDate: (json['plan_start_date'] as Timestamp).toDate(),
         lastLoggedIn: json['last_logged_in'] ?? DateTime.now());
@@ -63,6 +66,7 @@ class UserModel {
     data['plan_start_date'] = planStartDate;
     data['plan_expired_date'] = planExpiredDate;
     data['plan_name'] = planName;
+    data['login_type'] = loginType;
     return data;
   }
 }

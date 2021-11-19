@@ -1,11 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/auth/register.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final auth = watch(authControllerProvider);
+      final user = watch(userControllerProvider);
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
@@ -69,7 +74,42 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 20,
               ),
               MaterialButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  try {
+                    final GoogleSignInAccount? googleUser =
+                        await GoogleSignIn().signIn();
+
+                    if (user.searchSocialUserbyEmail(googleUser!.email)) {
+                      const snackBar = SnackBar(
+                          content: Text(
+                              'Email Address has been used by another person'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    } else {
+                      final GoogleSignInAuthentication? googleAuth =
+                          await googleUser.authentication;
+
+                      final credential = GoogleAuthProvider.credential(
+                        accessToken: googleAuth?.accessToken,
+                        idToken: googleAuth?.idToken,
+                      );
+
+                      if (!await auth.socialSignIn(credential)) {
+                        final snackBar = SnackBar(content: Text(auth.error!));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        return;
+                      } else {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomeScreen()),
+                            (Route<dynamic> route) => false);
+                      }
+                    }
+                  } catch (err) {
+                    //print(err.toString());
+                  }
+                },
                 elevation: 0,
                 color: Commons.whiteColor,
                 shape: RoundedRectangleBorder(
@@ -123,7 +163,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               MaterialButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  try {
+                    final credential =
+                        await SignInWithApple.getAppleIDCredential(
+                      scopes: [
+                        AppleIDAuthorizationScopes.email,
+                        AppleIDAuthorizationScopes.fullName,
+                      ],
+                    );
+
+                    print(credential.email);
+                  } catch (err) {
+                    print(err.toString());
+                  }
+                },
                 elevation: 0,
                 color: Commons.whiteColor,
                 shape: RoundedRectangleBorder(

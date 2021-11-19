@@ -50,6 +50,38 @@ class AuthController extends ChangeNotifier {
     }
   }
 
+  Future<bool> socialSignIn(OAuthCredential credential) async {
+    try {
+      loading = true;
+      notifyListeners();
+      final res = await _read(authRepositoryProvider).socialSignIn(credential);
+      UserModel user = UserModel(
+          address: '',
+          loginType: 'social',
+          email: res!.user!.email,
+          password: '',
+          fullName: res.user!.displayName,
+          phoneNumber: res.user!.phoneNumber,
+          accountType: 'personal',
+          profileImage: res.user!.photoURL,
+          lastLoggedIn: DateTime.now(),
+          uid: res.user!.uid);
+      await _read(firebaseFirestoreProvider)
+          .user()
+          .doc(user.uid)
+          .set(user.toJson());
+      _fsUser = user;
+      _error = '';
+      loading = false;
+      return true;
+    } on CustomException catch (e) {
+      _error = e.message;
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> signIn(String email, String password) async {
     try {
       loading = true;
@@ -80,12 +112,14 @@ class AuthController extends ChangeNotifier {
       final res = await _read(authRepositoryProvider).signUp(email, password);
       UserModel user = UserModel(
           address: '',
+          loginType: 'email',
           email: email,
           password: password,
           fullName: fullname,
           phoneNumber: phone,
           accountType: accountType,
           profileImage: '',
+          lastLoggedIn: DateTime.now(),
           uid: res!.user!.uid);
       await _read(firebaseFirestoreProvider)
           .user()
@@ -173,6 +207,28 @@ class AuthController extends ChangeNotifier {
         'email': email,
         'contact_address': address,
         'phone_number': number
+      });
+      final user =
+          await _read(firebaseFirestoreProvider).user().doc(_user!.uid).get();
+      _fsUser = UserModel.fromDocument(user.data());
+      loading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> updatePlan(String name, DateTime start, DateTime end) async {
+    try {
+      loading = true;
+      notifyListeners();
+      await _read(firebaseFirestoreProvider).user().doc(_user!.uid).update({
+        'plan_name': name,
+        'plan_start_date': start,
+        'plan_expired_date': end,
       });
       final user =
           await _read(firebaseFirestoreProvider).user().doc(_user!.uid).get();

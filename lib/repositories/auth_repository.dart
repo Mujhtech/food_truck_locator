@@ -1,14 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 abstract class BaseAuthRepository {
   Stream<User?> get authStateChanges;
   Future<UserCredential?> signIn(String email, String password);
   Future<UserCredential?> signUp(String email, String password);
-  Future<UserCredential?> signInWithGoogle();
+  Future<UserCredential?> socialSignIn(OAuthCredential credential);
   User? getCurrentUser();
   Future<void> signOut();
   Future<void> resetPassword(String email);
@@ -33,19 +32,9 @@ class AuthRepository implements BaseAuthRepository {
   }
 
   @override
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<UserCredential?> socialSignIn(OAuthCredential credential) async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+      return await _read(firebaseAuthProvider).signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
       throw CustomException(message: e.message);
     }

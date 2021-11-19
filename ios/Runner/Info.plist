@@ -55,5 +55,16 @@
 	<string>Upload images from library</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Upload image from camera</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.638360667643-41ss7sg2j30i02744btgrpup1r1mqd70</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

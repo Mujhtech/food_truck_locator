@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/remote_config_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/services/backend_service.dart';
-import 'package:food_truck_locator/ui/truck/card.dart';
+import 'package:food_truck_locator/ui/truck/confirm.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -22,6 +23,7 @@ class _TruckPlanState extends State<TruckPlan> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final remote = watch(remoteControllerProvider);
+      final auth = watch(authControllerProvider);
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -403,11 +405,29 @@ class _TruckPlanState extends State<TruckPlan> {
                           googlePay: true,
                           style: ThemeMode.dark,
                           testEnv: true,
-                          merchantDisplayName: 'Mujhtech',
+                          merchantDisplayName: auth.user!.fullName!,
                           paymentIntentClientSecret: paymentIntent,
                         ));
 
                         await Stripe.instance.presentPaymentSheet();
+                        if (selectedPlan! == "premium") {
+                          await auth.updatePlan(selectedPlan!, DateTime.now(),
+                              DateTime.now().add(const Duration(days: 364)));
+                        } else if (selectedPlan! == "standard") {
+                          await auth.updatePlan(selectedPlan!, DateTime.now(),
+                              DateTime.now().add(const Duration(days: 30)));
+                        } else {
+                          await auth.updatePlan(
+                              selectedPlan!, DateTime.now(), DateTime.now());
+                        }
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TruckConfirmPayment(
+                                      selectedAmount: selectedAmount,
+                                      selectedPlan: selectedPlan!,
+                                    )),
+                            (Route<dynamic> route) => false);
                       } catch (err) {
                         //
                         //print(err.toString());
@@ -415,11 +435,6 @@ class _TruckPlanState extends State<TruckPlan> {
                             SnackBar(content: Text('Payment has been cancel'));
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       }
-
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => const TruckCardPayment()));
                     },
                     elevation: 0,
                     color: Commons.primaryColor,

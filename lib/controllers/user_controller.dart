@@ -20,6 +20,21 @@ class UserController extends ChangeNotifier {
     retrieve();
   }
 
+  bool searchSocialUserbyEmail(String email) {
+    bool user = false;
+
+    if (_users!.isNotEmpty) {
+      for (final data in _users!) {
+        if (data.email! == email && data.loginType == "email") {
+          user = true;
+          break;
+        }
+      }
+    }
+
+    return user;
+  }
+
   Future<void> retrieve() async {
     try {
       loading = true;
