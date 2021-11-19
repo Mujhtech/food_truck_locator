@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class FoodModel {
   String? id;
   String? userId;
@@ -8,6 +10,7 @@ class FoodModel {
   String? truckId;
   int? amount;
   List<String>? galleries;
+  DateTime? createdAt;
 
   FoodModel(
       {this.id,
@@ -18,6 +21,7 @@ class FoodModel {
       this.truckId,
       this.title,
       this.amount,
+      this.createdAt,
       this.galleries});
 
   factory FoodModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +34,7 @@ class FoodModel {
         featuredImage: json['featured_image'],
         bannerImage: json['banner_image'],
         amount: json['amount'],
+        createdAt: (json['created_at'] as Timestamp).toDate(),
         galleries: json['galleries'] != null && json['galleries'].length > 0
             ? json['galleries'].cast<String>()
             : []);
@@ -51,6 +56,7 @@ class FoodModel {
     data['banner_image'] = bannerImage;
     data['amount'] = amount;
     data['galleries'] = galleries;
+    data['created_at'] = createdAt;
     return data;
   }
 

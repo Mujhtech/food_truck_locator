@@ -78,7 +78,7 @@ class FoodController extends ChangeNotifier {
           bannerImage: bannerImage,
           featuredImage: featuredImage,
           galleries: galleries,
-          userId: userId);
+          userId: userId, createdAt: DateTime.now());
       await _read(foodRepositoryProvider).create(id: id, item: item);
       loading = false;
       retrieve();
@@ -93,21 +93,31 @@ class FoodController extends ChangeNotifier {
   }
 
   Future<bool> update(
-      String userId, String title, String description, int price) async {
+      String userId,
+      String truckId,
+      String title,
+      String description,
+      int price,
+      String featuredImage,
+      String bannerImage,
+      List<String> galleries) async {
     try {
       loading = true;
       notifyListeners();
       String id = _read(firebaseFirestoreProvider).food().doc().id.toString();
       FoodModel item = FoodModel(
+          truckId: truckId,
           amount: price,
           id: id,
           title: title,
           description: description,
-          bannerImage: '',
-          featuredImage: '',
-          userId: userId);
+          bannerImage: bannerImage,
+          featuredImage: featuredImage,
+          galleries: galleries,
+          userId: userId, createdAt: DateTime.now());
       await _read(foodRepositoryProvider).update(id: id, item: item);
       loading = false;
+      retrieve();
       notifyListeners();
       return true;
     } on CustomException catch (e) {
@@ -117,6 +127,7 @@ class FoodController extends ChangeNotifier {
       return false;
     }
   }
+
 
   Future<List<String>> uploadFiles(List<File> _images) async {
     loading = true;
@@ -140,5 +151,22 @@ class FoodController extends ChangeNotifier {
     loading = false;
     notifyListeners();
     return result;
+  }
+
+  Future<bool> removeImage(String url) async {
+    try {
+      loading = true;
+      notifyListeners();
+        Reference ref1 =
+            _read(firebaseStorageProvider).refFromURL(url);
+        await ref1.delete();
+      loading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      loading = false;
+      notifyListeners();
+      return false;
+    }
   }
 }

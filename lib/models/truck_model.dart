@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TruckModel {
   String? id;
   String? title;
@@ -11,6 +13,7 @@ class TruckModel {
   String? website;
   String? userId;
   List<String>? galleries;
+  DateTime? createdAt;
 
   TruckModel(
       {this.id,
@@ -24,7 +27,8 @@ class TruckModel {
       this.longitude,
       this.website,
       this.userId,
-      this.galleries});
+      this.galleries,
+      this.createdAt});
 
   factory TruckModel.fromJson(Map<String, dynamic> json) {
     return TruckModel(
@@ -39,6 +43,7 @@ class TruckModel {
         description: json['description'],
         featuredImage: json['featured_image'],
         bannerImage: json['banner_image'],
+        createdAt: (json['created_at'] as Timestamp).toDate(),
         galleries: json['galleries'] != null && json['galleries'].length > 0
             ? json['galleries'].cast<String>()
             : []);
@@ -63,6 +68,7 @@ class TruckModel {
     data['featured_image'] = featuredImage;
     data['banner_image'] = bannerImage;
     data['galleries'] = galleries;
+    data['created_at'] = createdAt;
     return data;
   }
 

@@ -70,7 +70,50 @@ class TruckController extends ChangeNotifier {
           latitude: '$latitude',
           longitude: '$longitude',
           userId: userId,
-          galleries: galleries);
+          galleries: galleries,
+          createdAt: DateTime.now());
+      await _read(truckRepositoryProvider).create(id: id, item: item);
+      loading = false;
+      retrieve();
+      notifyListeners();
+      return true;
+    } on CustomException catch (e) {
+      error = e.message;
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> update(
+      String userId,
+      String title,
+      String description,
+      String location,
+      String website,
+      double latitude,
+      double longitude,
+      String bannerImage,
+      String featuredImage,
+      List<String> galleries) async {
+    try {
+      loading = true;
+      notifyListeners();
+      String id = _read(firebaseFirestoreProvider).truck().doc().id.toString();
+      TruckModel item = TruckModel(
+          id: id,
+          title: title,
+          description: description,
+          plan: 'premium',
+          location: location,
+          bannerImage: bannerImage,
+          featuredImage: featuredImage,
+          website: website,
+          latitude: '$latitude',
+          longitude: '$longitude',
+          userId: userId,
+          galleries: galleries,
+          createdAt: DateTime.now());
       await _read(truckRepositoryProvider).create(id: id, item: item);
       loading = false;
       retrieve();
@@ -107,5 +150,21 @@ class TruckController extends ChangeNotifier {
     loading = false;
     notifyListeners();
     return result;
+  }
+
+  Future<bool> removeImage(String url) async {
+    try {
+      loading = true;
+      notifyListeners();
+      Reference ref1 = _read(firebaseStorageProvider).refFromURL(url);
+      await ref1.delete();
+      loading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      loading = false;
+      notifyListeners();
+      return false;
+    }
   }
 }

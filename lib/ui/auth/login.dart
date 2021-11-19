@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +26,21 @@ class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+
+  String generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
+  }
+
+  String sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
@@ -94,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         idToken: googleAuth?.idToken,
                       );
 
-                      if (!await auth.socialSignIn(credential)) {
+                      if (!await auth.googleSignIn(credential)) {
                         final snackBar = SnackBar(content: Text(auth.error!));
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         return;
@@ -164,6 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               MaterialButton(
                 onPressed: () async {
+                  final rawNonce = generateNonce();
+                  final nonce = sha256ofString(rawNonce);
                   try {
                     final credential =
                         await SignInWithApple.getAppleIDCredential(
@@ -171,11 +192,43 @@ class _LoginScreenState extends State<LoginScreen> {
                         AppleIDAuthorizationScopes.email,
                         AppleIDAuthorizationScopes.fullName,
                       ],
+                      nonce: nonce,
                     );
 
-                    print(credential.email);
+                    final oauthCredential =
+                        OAuthProvider("apple.com").credential(
+                      idToken: credential.identityToken,
+                      rawNonce: rawNonce,
+                    );
+
+                    if (credential.email == null) {
+                      const snackBar = SnackBar(
+                          content: Text('Enable share with email to continue'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
+
+                    if (user.searchSocialUserbyEmail(credential.email!)) {
+                      const snackBar = SnackBar(
+                          content: Text(
+                              'Email Address has been used by another person'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
+
+                    if (!await auth.appleSignIn(oauthCredential)) {
+                      final snackBar = SnackBar(content: Text(auth.error!));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    } else {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomeScreen()),
+                          (Route<dynamic> route) => false);
+                    }
                   } catch (err) {
-                    print(err.toString());
+                    //print(err.toString());
                   }
                 },
                 elevation: 0,

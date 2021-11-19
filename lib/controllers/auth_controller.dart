@@ -50,7 +50,40 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<bool> socialSignIn(OAuthCredential credential) async {
+  Future<bool> googleSignIn(OAuthCredential credential) async {
+    try {
+      loading = true;
+      notifyListeners();
+      final res = await _read(authRepositoryProvider).socialSignIn(credential);
+      UserModel user = UserModel(
+          address: '',
+          loginType: 'social',
+          email: res!.user!.email,
+          password: '',
+          fullName: res.user!.displayName,
+          phoneNumber: res.user!.phoneNumber,
+          accountType: 'personal',
+          profileImage: res.user!.photoURL,
+          lastLoggedIn: DateTime.now(),
+          uid: res.user!.uid);
+      await _read(firebaseFirestoreProvider)
+          .user()
+          .doc(user.uid)
+          .set(user.toJson());
+      _fsUser = user;
+      _error = '';
+      loading = false;
+      return true;
+    } on CustomException catch (e) {
+      _error = e.message;
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+
+  Future<bool> appleSignIn(OAuthCredential credential) async {
     try {
       loading = true;
       notifyListeners();
