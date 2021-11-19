@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/food_controller.dart';
+import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/order_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,6 +14,7 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final food = watch(foodController);
+      final user = watch(userControllerProvider);
       return Container(
         padding: const EdgeInsets.all(10),
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -104,14 +106,17 @@ class OrderCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Banu Elson',
+                  Text(user.filterUserbyId(item.userId!).fullName!,
                       style: Theme.of(context).textTheme.bodyText2!.copyWith(
                             fontWeight: FontWeight.w600,
                           )),
                   const SizedBox(
                     height: 10,
                   ),
-                  Text('orders@banuelson.com\n+49 179 111 1010',
+                  Text(
+                      user.filterUserbyId(item.userId!).email! +
+                          '\n' +
+                          user.filterUserbyId(item.userId!).phoneNumber!,
                       style: Theme.of(context).textTheme.bodyText2),
                   const SizedBox(
                     height: 10,

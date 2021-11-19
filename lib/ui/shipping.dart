@@ -7,7 +7,7 @@ import 'package:food_truck_locator/ui/order_confirm.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ShippingScreen extends StatelessWidget {
+class ShippingScreen extends StatefulWidget {
   final String address;
   final String city;
   final String postalCode;
@@ -20,6 +20,11 @@ class ShippingScreen extends StatelessWidget {
       required this.postalCode})
       : super(key: key);
 
+  @override
+  State<ShippingScreen> createState() => _ShippingScreenState();
+}
+
+class _ShippingScreenState extends State<ShippingScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
@@ -106,13 +111,13 @@ class ShippingScreen extends StatelessWidget {
                               height: 10,
                             ),
                             Text(
-                                postalCode +
+                                widget.postalCode +
                                     ', ' +
-                                    address +
+                                    widget.address +
                                     ', \n' +
-                                    city +
+                                    widget.city +
                                     ' ' +
-                                    country,
+                                    widget.country,
                                 style: Theme.of(context).textTheme.bodyText2)
                           ],
                         ),
@@ -193,20 +198,25 @@ class ShippingScreen extends StatelessWidget {
                       else
                         MaterialButton(
                           onPressed: () async {
-                            if (!await order.create(cart.carts!.data, city,
-                                address, country, postalCode)) {
+                            if (!await order.create(
+                                cart.carts!.data,
+                                widget.city,
+                                widget.address,
+                                widget.country,
+                                widget.postalCode)) {
                               return;
                             }
-                            Navigator.push(
+                            Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         OrderConfirmationScreen(
-                                          address: address,
-                                          city: city,
-                                          postalCode: postalCode,
-                                          country: country,
-                                        )));
+                                          address: widget.address,
+                                          city: widget.city,
+                                          postalCode: widget.postalCode,
+                                          country: widget.country,
+                                        )),
+                                (Route<dynamic> route) => false);
                           },
                           elevation: 0,
                           color: Commons.primaryColor,

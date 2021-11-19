@@ -40,6 +40,21 @@ class FoodModel {
             : []);
   }
 
+  factory FoodModel.fromMap(Map<String, dynamic> json) {
+    return FoodModel(
+        id: json['id'],
+        userId: json['user_id'],
+        title: json['title'],
+        truckId: json['truck_id'],
+        description: json['description'],
+        featuredImage: json['featured_image'],
+        bannerImage: json['banner_image'],
+        amount: json['amount'],
+        galleries: json['galleries'] != null && json['galleries'].length > 0
+            ? json['galleries'].cast<String>()
+            : []);
+  }
+
   factory FoodModel.fromDocument(doc) {
     final data = doc;
     return FoodModel.fromJson(data);

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling a background message ${message.messageId}');
+  //print('Handling a background message ${message.messageId}');
 }
 
 class PushNotificationsManager {
@@ -70,8 +70,8 @@ class PushNotificationsManager {
         //print(message);
       });
 
-      String? token = await _firebaseMessaging.getToken();
-      print("FirebaseMessaging token: $token");
+      //String? token = await _firebaseMessaging.getToken();
+      //print("FirebaseMessaging token: $token");
 
       _initialized = true;
     }

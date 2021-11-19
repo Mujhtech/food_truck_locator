@@ -316,56 +316,63 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ],
                         )),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Total',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(fontSize: 12)),
-                          Text(
-                              '${Commons.getTotalAmout(cart.carts != null ? cart.carts!.data : [])}USD',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(fontWeight: FontWeight.w600)),
-                        ],
+                      const SizedBox(
+                        height: 10,
                       ),
-                      MaterialButton(
-                        onPressed: () async {
-                          if (!formKey.currentState!.validate()) {
-                            return;
-                          }
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ShippingScreen(
-                                      country: country.text.trim(),
-                                      postalCode: postal.text.trim(),
-                                      address: address.text.trim(),
-                                      city: city.text.trim())));
-                        },
-                        elevation: 0,
-                        color: Commons.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Container(
-                          width: context.screenWidth(0.5),
-                          height: 56,
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Pay Now',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(color: Commons.whiteColor),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Total',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(fontSize: 12)),
+                              Text(
+                                  '${Commons.getTotalAmout(cart.carts != null ? cart.carts!.data : [])}USD',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(fontWeight: FontWeight.w600)),
+                            ],
                           ),
-                        ),
+                          MaterialButton(
+                            onPressed: () async {
+                              if (!formKey.currentState!.validate()) {
+                                return;
+                              }
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ShippingScreen(
+                                          country: country.text.trim(),
+                                          postalCode: postal.text.trim(),
+                                          address: address.text.trim(),
+                                          city: city.text.trim())));
+                            },
+                            elevation: 0,
+                            color: Commons.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Container(
+                              width: context.screenWidth(0.5),
+                              height: 56,
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Pay Now',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(color: Commons.whiteColor),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

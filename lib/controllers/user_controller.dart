@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/models/user_model.dart';
+import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
 import 'package:food_truck_locator/repositories/user_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,11 +14,18 @@ class UserController extends ChangeNotifier {
   String? error;
   List<UserModel>? _users;
   bool loading = false;
+  String? token;
 
   List<UserModel>? get users => _users;
 
   UserController(this._read) {
     retrieve();
+  }
+
+  UserModel filterUserbyId(String userId) {
+    return _users!.firstWhere((e) {
+      return e.uid! == userId;
+    });
   }
 
   bool searchSocialUserbyEmail(String email) {
@@ -40,6 +48,7 @@ class UserController extends ChangeNotifier {
       loading = true;
       notifyListeners();
       final items = await _read(userRepositoryProvider).get();
+      token = await _read(firebaseMessaging).getToken();
       _users = items;
       loading = false;
       notifyListeners();

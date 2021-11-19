@@ -56,13 +56,14 @@ class AuthController extends ChangeNotifier {
       notifyListeners();
       final res = await _read(authRepositoryProvider).socialSignIn(credential);
       UserModel user = UserModel(
+          fcmToken: await _read(firebaseMessaging).getToken(),
           address: '',
           loginType: 'social',
           email: res!.user!.email,
           password: '',
           fullName: res.user!.displayName,
           phoneNumber: res.user!.phoneNumber,
-          accountType: 'personal',
+          accountType: 'user',
           profileImage: res.user!.photoURL,
           lastLoggedIn: DateTime.now(),
           uid: res.user!.uid);
@@ -82,20 +83,20 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-
   Future<bool> appleSignIn(OAuthCredential credential) async {
     try {
       loading = true;
       notifyListeners();
       final res = await _read(authRepositoryProvider).socialSignIn(credential);
       UserModel user = UserModel(
+          fcmToken: await _read(firebaseMessaging).getToken(),
           address: '',
           loginType: 'social',
           email: res!.user!.email,
           password: '',
           fullName: res.user!.displayName,
           phoneNumber: res.user!.phoneNumber,
-          accountType: 'personal',
+          accountType: 'user',
           profileImage: res.user!.photoURL,
           lastLoggedIn: DateTime.now(),
           uid: res.user!.uid);
@@ -144,6 +145,7 @@ class AuthController extends ChangeNotifier {
       notifyListeners();
       final res = await _read(authRepositoryProvider).signUp(email, password);
       UserModel user = UserModel(
+          fcmToken: await _read(firebaseMessaging).getToken(),
           address: '',
           loginType: 'email',
           email: email,

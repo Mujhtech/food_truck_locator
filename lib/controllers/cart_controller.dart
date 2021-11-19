@@ -31,6 +31,10 @@ class CartController extends ChangeNotifier {
     _read(sharedUtilityProvider).saveSharedCartData(_carts!);
   }
 
+  CartModel filterCartbyId(String id) {
+    return _carts!.data.firstWhere((cart) => cart.id! == id);
+  }
+
   Future<bool> add(FoodModel item, int qty) async {
     if (_carts!.data.isEmpty) {
       _carts = ListOfCartModel(data: [
@@ -42,7 +46,7 @@ class CartController extends ChangeNotifier {
       return true;
     } else {
       if (checkIfCartAvailable(item.id!)) {
-        await edit(item: item, qty: qty);
+        await edit(item: item, qty: qty + filterCartbyId(item.id!).qty!);
       } else {
         for (final cart in _carts!.data) {
           if (cart.id != item.id) {

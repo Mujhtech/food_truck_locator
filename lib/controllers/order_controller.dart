@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
 import 'package:food_truck_locator/models/cart_model.dart';
 import 'package:food_truck_locator/models/order_model.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
 import 'package:food_truck_locator/repositories/order_repository.dart';
+import 'package:food_truck_locator/services/backend_service.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final orderControllerProvider = ChangeNotifierProvider<OrderController>((ref) {
@@ -20,6 +22,7 @@ class OrderController extends ChangeNotifier {
   List<OrderModel>? _orders;
   List<OrderModel>? _myorders;
   bool loading = false;
+  BackendServices backendServices = BackendServices();
 
   List<OrderModel>? get orders => _orders;
   List<OrderModel>? get myorders => _myorders;
@@ -79,6 +82,13 @@ class OrderController extends ChangeNotifier {
             rating: 0,
             comment: '',
             status: 'Pending');
+        final user = _read(userControllerProvider).filterUserbyId(_userId!);
+        final owner =
+            _read(userControllerProvider).filterUserbyId(data.item!.userId!);
+        await backendServices.sendNotification(
+            user.fcmToken!, 'Order', 'You just order ${data.item!.title!}');
+        await backendServices.sendNotification(owner.fcmToken!, 'Order',
+            '${user.fullName} just ordered ${data.item!.title!}');
         await _read(orderRepositoryProvider).create(id: id, item: item);
         myorder.add(item);
       }

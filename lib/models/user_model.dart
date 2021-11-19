@@ -14,6 +14,7 @@ class UserModel {
   DateTime? planStartDate;
   String? planName;
   String? loginType;
+  String? fcmToken;
 
   UserModel(
       {this.email,
@@ -28,7 +29,8 @@ class UserModel {
       this.planExpiredDate,
       this.planName,
       this.loginType,
-      this.planStartDate});
+      this.planStartDate,
+      this.fcmToken});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -42,6 +44,7 @@ class UserModel {
         profileImage: json['profile_picture'],
         planName: json['plan_name'],
         loginType: json['login_type'],
+        fcmToken: json['fcm_token'],
         planExpiredDate: (json['plan_expired_date'] as Timestamp).toDate(),
         planStartDate: (json['plan_start_date'] as Timestamp).toDate(),
         lastLoggedIn: json['last_logged_in'] ?? DateTime.now());
@@ -67,6 +70,7 @@ class UserModel {
     data['plan_expired_date'] = planExpiredDate;
     data['plan_name'] = planName;
     data['login_type'] = loginType;
+    data['fcm_token'] = fcmToken;
     return data;
   }
 }
