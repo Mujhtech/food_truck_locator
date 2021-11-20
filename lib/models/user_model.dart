@@ -34,20 +34,27 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-        fullName: json['full_name'],
-        uid: json['user_id'],
-        email: json['email'],
-        phoneNumber: json['phone_number'],
-        accountType: json['account_type'],
-        password: json['password'],
-        address: json['contact_address'],
-        profileImage: json['profile_picture'],
-        planName: json['plan_name'],
-        loginType: json['login_type'],
-        fcmToken: json['fcm_token'],
-        planExpiredDate: (json['plan_expired_date'] as Timestamp).toDate(),
-        planStartDate: (json['plan_start_date'] as Timestamp).toDate(),
-        lastLoggedIn: json['last_logged_in'] ?? DateTime.now());
+      fullName: json['full_name'],
+      uid: json['user_id'],
+      email: json['email'],
+      phoneNumber: json['phone_number'],
+      accountType: json['account_type'],
+      password: json['password'],
+      address: json['contact_address'],
+      profileImage: json['profile_picture'],
+      planName: json['plan_name'] ?? 'basic',
+      loginType: json['login_type'],
+      fcmToken: json['fcm_token'],
+      planExpiredDate: json['plan_expired_date'] != null
+          ? (json['plan_expired_date'] as Timestamp).toDate()
+          : DateTime.now(),
+      planStartDate: json['plan_start_date'] != null
+          ? (json['plan_start_date'] as Timestamp).toDate()
+          : DateTime.now(),
+      lastLoggedIn: json['last_logged_in'] != null
+          ? (json['last_logged_in'] as Timestamp).toDate()
+          : DateTime.now(),
+    );
   }
 
   factory UserModel.fromDocument(doc) {

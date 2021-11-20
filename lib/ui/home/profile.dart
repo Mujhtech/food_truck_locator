@@ -25,7 +25,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final auth = watch(authControllerProvider);
       if (auth.user != null) {
         email.text = auth.user!.email!;
-        phone.text = auth.user!.phoneNumber!;
+        phone.text =
+            auth.user!.phoneNumber != null ? auth.user!.phoneNumber! : "";
       }
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

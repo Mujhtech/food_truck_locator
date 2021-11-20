@@ -47,8 +47,9 @@ class UserController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
+      final fcmtoken = await _read(firebaseMessaging).getToken();
       final items = await _read(userRepositoryProvider).get();
-      token = await _read(firebaseMessaging).getToken();
+      token = fcmtoken;
       _users = items;
       loading = false;
       notifyListeners();

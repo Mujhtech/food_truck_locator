@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/food_controller.dart';
 import 'package:food_truck_locator/controllers/order_controller.dart';
+import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/widgets/modals/single_order_modal.dart';
 import 'package:food_truck_locator/widgets/order_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,6 +16,8 @@ class OrderScreen extends StatelessWidget {
     return Consumer(builder: (context, watch, _) {
       final order = watch(orderControllerProvider);
       final auth = watch(authControllerProvider);
+      final user = watch(userControllerProvider);
+      final food = watch(foodController);
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -33,7 +37,9 @@ class OrderScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 0, right: 0),
             child: Column(
               children: [
-                if (order.filterFoodByTruck(auth.user!.uid!).isNotEmpty)
+                if (order.filterFoodByTruck(auth.user!.uid!).isNotEmpty &&
+                    user.users != null &&
+                    food.foods != null)
                   Flexible(
                     fit: FlexFit.loose,
                     child: ListView.separated(

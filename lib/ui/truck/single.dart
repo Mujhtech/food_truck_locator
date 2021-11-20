@@ -291,6 +291,7 @@ class _TruckSingleState extends State<TruckSingle>
                             if (widget.item.galleries != null &&
                                 widget.item.galleries!.isNotEmpty)
                               GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
                                   padding: const EdgeInsets.only(
                                       bottom: 10.0, top: 5.0),

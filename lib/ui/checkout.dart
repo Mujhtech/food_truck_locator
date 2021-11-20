@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/cart_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
+import 'package:food_truck_locator/ui/auth/home.dart';
 import 'package:food_truck_locator/ui/shipping.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,6 +27,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final cart = watch(cartController);
+      final auth = watch(authControllerProvider);
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -342,9 +345,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                           MaterialButton(
                             onPressed: () async {
+                              if (auth.user == null) {
+                                const snackBar = SnackBar(
+                                    content: Text('Login to continue'));
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AuthHomeScreen()),
+                                    (Route<dynamic> route) => false);
+                                return;
+                              }
                               if (!formKey.currentState!.validate()) {
                                 return;
                               }
+
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

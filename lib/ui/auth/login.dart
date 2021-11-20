@@ -62,6 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.topRight,
                 child: InkWell(
                   onTap: () {
+                    if (auth.loading) {
+                      return;
+                    }
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -97,6 +100,16 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               MaterialButton(
                 onPressed: () async {
+                  if (auth.loading) {
+                    return;
+                  }
+                  if (!connect.connectivityStatus) {
+                    const snackBar =
+                        SnackBar(content: Text('No internet connection'));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
+
                   try {
                     final GoogleSignInAccount? googleUser =
                         await GoogleSignIn().signIn();
@@ -189,6 +202,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () async {
                     final rawNonce = generateNonce();
                     final nonce = sha256ofString(rawNonce);
+                    if (auth.loading) {
+                      return;
+                    }
+                    if (!connect.connectivityStatus) {
+                      const snackBar =
+                          SnackBar(content: Text('No internet connection'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
                     try {
                       final credential =
                           await SignInWithApple.getAppleIDCredential(

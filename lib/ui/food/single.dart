@@ -123,6 +123,7 @@ class FoodSingle extends StatelessWidget {
                                 item.galleries!.isNotEmpty)
                               GridView.builder(
                                   shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
                                   padding: const EdgeInsets.only(
                                       bottom: 10.0, top: 5.0),
                                   itemCount: item.galleries!.length,
