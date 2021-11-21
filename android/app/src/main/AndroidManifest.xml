@@ -13,7 +13,7 @@
         android:label="Food Truck"
         android:icon="@mipmap/launcher_icon">
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyAYbyhtGqlePE6tJa8uNHmcwV25IQHef6U"/>
+               android:value="AIzaSyD6QXU8pMoTjxSoruq74jXwv-0ppX6cpw0"/>
         <meta-data
           android:name="com.google.firebase.messaging.default_notification_icon"
           android:resource="@drawable/app_icon"
