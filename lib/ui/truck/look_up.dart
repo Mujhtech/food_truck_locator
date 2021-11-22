@@ -101,7 +101,7 @@ class _TruckLookUpState extends State<TruckLookUp> {
                       markers: markers
                         ..add(Marker(
                             markerId: const MarkerId("My Location"),
-                            icon: customIcon,
+                            //icon: customIcon,
                             infoWindow: const InfoWindow(title: "My Location"),
                             position: _userLocation)),
                     );

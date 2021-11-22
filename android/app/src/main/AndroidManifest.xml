@@ -10,10 +10,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
    <application
-        android:label="Food Truck"
+        android:label="Food Truck Locator"
         android:icon="@mipmap/launcher_icon">
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyD6QXU8pMoTjxSoruq74jXwv-0ppX6cpw0"/>
+               android:value="AIzaSyAYbyhtGqlePE6tJa8uNHmcwV25IQHef6U"/>
         <meta-data
           android:name="com.google.firebase.messaging.default_notification_icon"
           android:resource="@drawable/app_icon"

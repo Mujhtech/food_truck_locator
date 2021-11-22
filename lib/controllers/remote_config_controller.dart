@@ -13,7 +13,10 @@ class RemoteConfigController extends ChangeNotifier {
   final defaults = <String, dynamic>{
     'basic_price': 5,
     'standard_price': 10,
-    'premium_price': 50
+    'premium_price': 50,
+    'basic_text': 'Lorem Ipsum Lorem\nLorem Ipsum Lorem\nLorem Ipsum Lorem',
+    'standard_text': 'Lorem Ipsum Lorem\nLorem Ipsum Lorem\nLorem Ipsum Lorem',
+    'premium_text': 'Lorem Ipsum Lorem\nLorem Ipsum Lorem\nLorem Ipsum Lorem',
   };
 
   RemoteConfigController(this._read);

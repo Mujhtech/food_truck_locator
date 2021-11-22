@@ -150,8 +150,7 @@ class _TruckPlanState extends State<TruckPlan> {
                               ),
                             ],
                           ),
-                          Text(
-                              'Lorem Ipsum Lorem\nLorem Ipsum Lorem\nLorem Ipsum Lorem',
+                          Text(remote.getStringVal('basic_text'),
                               style: Theme.of(context).textTheme.bodyText2)
                         ],
                       ),
@@ -256,8 +255,7 @@ class _TruckPlanState extends State<TruckPlan> {
                               ),
                             ],
                           ),
-                          Text(
-                              'Lorem Ipsum Lorem\nLorem Ipsum Lorem\nLorem Ipsum Lorem',
+                          Text(remote.getStringVal('standard_text'),
                               style: Theme.of(context).textTheme.bodyText2)
                         ],
                       ),
@@ -360,8 +358,7 @@ class _TruckPlanState extends State<TruckPlan> {
                               ),
                             ],
                           ),
-                          Text(
-                              'Lorem Ipsum Lorem\nLorem Ipsum Lorem\nLorem Ipsum Lorem',
+                          Text(remote.getStringVal('premium_text'),
                               style: Theme.of(context).textTheme.bodyText2)
                         ],
                       ),

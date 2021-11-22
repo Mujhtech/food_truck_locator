@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
+import 'package:food_truck_locator/controllers/remote_config_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
@@ -16,6 +17,7 @@ class TruckConfirmPayment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final auth = watch(authControllerProvider);
+      final remote = watch(remoteControllerProvider);
       return Scaffold(
           appBar: AppBar(
             elevation: 0,
@@ -161,8 +163,7 @@ class TruckConfirmPayment extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              Text(
-                                  'Lorem Ipsum Lorem\nLorem Ipsum Lorem\nLorem Ipsum Lorem',
+                              Text(remote.getStringVal('${selectedPlan}_text'),
                                   style: Theme.of(context).textTheme.bodyText2)
                             ],
                           ),

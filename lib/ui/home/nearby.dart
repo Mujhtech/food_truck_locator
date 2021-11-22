@@ -129,7 +129,7 @@ class _NearbyScreenState extends State<NearbyScreen> {
                               markers: truck.maps(customIcon, onClickMarker)
                                 ..add(Marker(
                                     markerId: const MarkerId("My Location"),
-                                    icon: customIcon,
+                                    //icon: customIcon,
                                     infoWindow:
                                         const InfoWindow(title: "My Location"),
                                     position: _userLocation)),

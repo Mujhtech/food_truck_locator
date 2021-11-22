@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
-import 'package:food_truck_locator/ui/home/cart.dart';
+//import 'package:food_truck_locator/ui/home/cart.dart';
 import 'package:food_truck_locator/ui/home/explore.dart';
 import 'package:food_truck_locator/ui/home/food.dart';
 import 'package:food_truck_locator/ui/home/nearby.dart';
-import 'package:food_truck_locator/ui/home/order.dart';
+//import 'package:food_truck_locator/ui/home/order.dart';
 import 'package:food_truck_locator/ui/home/profile.dart';
 import 'package:food_truck_locator/ui/home/truck.dart';
 import 'package:food_truck_locator/utils/constant.dart';
@@ -32,14 +32,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> user = [
     const ExploreScreen(),
     const NearbyScreen(),
-    const CartScreen(),
+    //const CartScreen(),
     const ProfileScreen(),
   ];
 
   final List<Widget> merchant = [
     const TruckScreen(),
     const CuisinesScreen(),
-    const OrderScreen(),
+    //const OrderScreen(),
     const ProfileScreen(),
   ];
 
@@ -103,17 +103,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? 'Cuisines'
                   : 'Near By',
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/images/Cart.svg',
-                  color: _selectedIndex == 2
-                      ? Commons.primaryColor
-                      : const Color(0xFF656565),
-                  semanticsLabel:
-                      auth.user != null && auth.user!.accountType! == 'merchant'
-                          ? 'Orders'
-                          : 'Cart'),
-              label: auth.user != null && auth.user!.accountType! == 'merchant' ? 'Orders' : 'Cart',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: SvgPicture.asset('assets/images/Cart.svg',
+            //       color: _selectedIndex == 2
+            //           ? Commons.primaryColor
+            //           : const Color(0xFF656565),
+            //       semanticsLabel:
+            //           auth.user != null && auth.user!.accountType! == 'merchant'
+            //               ? 'Orders'
+            //               : 'Cart'),
+            //   label: auth.user != null && auth.user!.accountType! == 'merchant' ? 'Orders' : 'Cart',
+            // ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset('assets/images/User.svg',
                   color: _selectedIndex == 3
