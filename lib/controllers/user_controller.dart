@@ -28,12 +28,12 @@ class UserController extends ChangeNotifier {
     });
   }
 
-  bool searchSocialUserbyEmail(String email) {
+  bool searchSocialUserbyEmail(String email, String type) {
     bool user = false;
 
     if (_users!.isNotEmpty) {
       for (final data in _users!) {
-        if (data.email! == email && data.loginType == "email") {
+        if (data.email! == email && data.loginType == type) {
           user = true;
           break;
         }

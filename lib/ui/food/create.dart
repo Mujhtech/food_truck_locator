@@ -133,27 +133,27 @@ class _FoodCreateState extends State<FoodCreate> {
                             height: 105,
                             child: GestureDetector(
                               onTap: () async {
-                                if (!await Commons.checkStoragePermission()) {
-                                  if (!await Commons
-                                      .requestStoragePermission()) {
-                                    return;
-                                  }
-                                }
-                                try {
-                                  final XFile? image = await _picker.pickImage(
-                                      source: ImageSource.gallery);
-                                  if (image!.name.isNotEmpty) {
-                                    setState(() {
-                                      featuredImage = File(image.path);
-                                    });
-                                  }
-                                } catch (err) {
-                                  //print(err.toString());
-                                }
+                                // if (!await Commons.checkStoragePermission()) {
+                                //   if (!await Commons
+                                //       .requestStoragePermission()) {
+                                //     return;
+                                //   }
+                                // }
+                                // try {
+                                //   final XFile? image = await _picker.pickImage(
+                                //       source: ImageSource.gallery);
+                                //   if (image!.name.isNotEmpty) {
+                                //     setState(() {
+                                //       featuredImage = File(image.path);
+                                //     });
+                                //   }
+                                // } catch (err) {
+                                //   //print(err.toString());
+                                // }
                               },
-                              child: featuredImage != null
+                              child: galleries != null && galleries!.isEmpty
                                   ? Image.file(
-                                      featuredImage!,
+                                      galleries![0],
                                       width: 200,
                                       height: 200,
                                     )
@@ -381,16 +381,16 @@ class _FoodCreateState extends State<FoodCreate> {
                         if (!formKey.currentState!.validate()) {
                           return;
                         }
-                        if (featuredImage == null ||
-                            featuredImage!.path.isEmpty) {
+                        // if (featuredImage == null ||
+                        //     featuredImage!.path.isEmpty) {
+                        //   const snackBar = SnackBar(
+                        //       content: Text('Please select featured image'));
+                        //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        //   return;
+                        // }
+                        if (galleries == null || galleries!.isEmpty) {
                           const snackBar = SnackBar(
-                              content: Text('Please select featured image'));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
-                        }
-                        if (galleries == null || galleries!.length < 2) {
-                          const snackBar = SnackBar(
-                              content: Text('Please minimum of 2 images'));
+                              content: Text('Please minimum of 1 images'));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           return;
                         }
@@ -406,7 +406,7 @@ class _FoodCreateState extends State<FoodCreate> {
                             title: title.text.trim(),
                             about: description.text.trim(),
                             galleries: galleries!,
-                            featuredImage: featuredImage!,
+                            //featuredImage: featuredImage!,
                           ),
                         );
                       },
@@ -440,14 +440,13 @@ class _FoodCreateState extends State<FoodCreate> {
 }
 
 class SelectTruckModal extends StatefulWidget {
-  final File featuredImage;
+  //final File featuredImage;
   final List<File> galleries;
   final String title;
   final String about;
   final String amount;
   const SelectTruckModal(
       {Key? key,
-      required this.featuredImage,
       required this.title,
       required this.galleries,
       required this.amount,
@@ -460,6 +459,7 @@ class SelectTruckModal extends StatefulWidget {
 
 class _SelectTruckModalState extends State<SelectTruckModal> {
   String? selectedId;
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
@@ -467,309 +467,329 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
       final food = watch(foodController);
       final auth = watch(authControllerProvider);
       final connect = watch(connectivityControllerProvider);
-      return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Column(mainAxisSize: MainAxisSize.min, children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100.0),
-                    color: const Color(0xFFFFFFFF),
-                  ),
-                  width: 42,
-                  height: 42,
-                  child: const Center(
-                    child: Icon(
-                      Icons.close,
-                      size: 20,
-                      color: Color(0xFF656565),
+      return WillPopScope(
+        onWillPop: () async => !loading,
+        child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Column(mainAxisSize: MainAxisSize.min, children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {
+                    if (loading) {
+                      return;
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100.0),
+                      color: const Color(0xFFFFFFFF),
+                    ),
+                    width: 42,
+                    height: 42,
+                    child: const Center(
+                      child: Icon(
+                        Icons.close,
+                        size: 20,
+                        color: Color(0xFF656565),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Expanded(
-                child: Container(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, bottom: 20, top: 20),
-                    width: context.screenWidth(1),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10))),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Select Truck',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline2!
-                              .copyWith(fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        if (truck.trucks!.isNotEmpty)
-                          Flexible(
-                            fit: FlexFit.loose,
-                            child: GridView.builder(
-                                padding: const EdgeInsets.only(
-                                    bottom: 10.0, top: 5.0),
-                                itemCount: truck.trucks!.length,
-                                scrollDirection: Axis.vertical,
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  childAspectRatio: (1 / 1.1),
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
-                                ),
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedId = truck.trucks![index].id;
-                                        });
-                                      },
-                                      child: Stack(
-                                        children: [
-                                          TruckCard(
-                                            title: truck.trucks![index].title!,
-                                            bannerImage: truck
-                                                .trucks![index].bannerImage!,
-                                            width: 1,
-                                          ),
-                                          if (selectedId != null &&
-                                              selectedId ==
-                                                  truck.trucks![index].id!)
-                                            Center(
-                                              child: Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          color: Commons
-                                                              .whiteColor,
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          100))),
-                                                  child: const Icon(
-                                                    Icons.check,
-                                                    size: 20,
-                                                    color: Commons.primaryColor,
-                                                  )),
-                                            )
-                                        ],
-                                      ));
-                                }),
+              const SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, bottom: 20, top: 20),
+                      width: context.screenWidth(1),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10))),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Select Truck',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline2!
+                                .copyWith(fontWeight: FontWeight.w600),
                           ),
-                        Column(
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            if (food.loading)
-                              const Center(
-                                child: SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Commons.primaryColor)),
-                                ),
-                              )
-                            else
-                              MaterialButton(
-                                onPressed: () async {
-                                  if (selectedId == null) {
-                                    return;
-                                  }
-                                  if (!connect.connectivityStatus) {
-                                    const snackBar = SnackBar(
-                                        content:
-                                            Text('No internet connection'));
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                    return;
-                                  }
-                                  try {
-                                    final featured = await food
-                                        .uploadFile(widget.featuredImage);
-                                    final gallery = await food
-                                        .uploadFiles(widget.galleries);
-                                    if (!await food.create(
-                                        auth.user!.uid!,
-                                        selectedId!,
-                                        widget.title,
-                                        widget.about,
-                                        int.parse(widget.amount),
-                                        featured,
-                                        gallery[0],
-                                        gallery)) {
-                                      return;
-                                    } else {
-                                      showGeneralDialog(
-                                        barrierLabel: "Barrier",
-                                        barrierDismissible: true,
-                                        barrierColor:
-                                            Colors.black.withOpacity(0.5),
-                                        transitionDuration:
-                                            const Duration(milliseconds: 200),
-                                        context: context,
-                                        pageBuilder: (_, __, ___) {
-                                          return Align(
-                                            alignment: Alignment.center,
-                                            child: Container(
-                                              height: 283,
-                                              width: 293,
-                                              child: SizedBox.expand(
-                                                  child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    height: 75,
-                                                    width: 75,
-                                                    decoration: BoxDecoration(
-                                                      color: Commons
-                                                          .primaryColor
-                                                          .withOpacity(0.05),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              100),
-                                                    ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (truck.trucks!.isNotEmpty)
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: GridView.builder(
+                                  padding: const EdgeInsets.only(
+                                      bottom: 10.0, top: 5.0),
+                                  itemCount: truck.trucks!.length,
+                                  scrollDirection: Axis.vertical,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: (1 / 1.1),
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedId =
+                                                truck.trucks![index].id;
+                                          });
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            TruckCard(
+                                              title:
+                                                  truck.trucks![index].title!,
+                                              bannerImage: truck
+                                                  .trucks![index].bannerImage!,
+                                              width: 1,
+                                            ),
+                                            if (selectedId != null &&
+                                                selectedId ==
+                                                    truck.trucks![index].id!)
+                                              Center(
+                                                child: Container(
+                                                    height: 30,
+                                                    width: 30,
+                                                    decoration: const BoxDecoration(
+                                                        color:
+                                                            Commons.whiteColor,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    100))),
                                                     child: const Icon(
                                                       Icons.check,
+                                                      size: 20,
                                                       color:
                                                           Commons.primaryColor,
+                                                    )),
+                                              )
+                                          ],
+                                        ));
+                                  }),
+                            ),
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              if (loading || food.loading)
+                                const Center(
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Commons.primaryColor)),
+                                  ),
+                                )
+                              else
+                                MaterialButton(
+                                  onPressed: () async {
+                                    if (selectedId == null) {
+                                      return;
+                                    }
+                                    if (!connect.connectivityStatus) {
+                                      const snackBar = SnackBar(
+                                          content:
+                                              Text('No internet connection'));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                      return;
+                                    }
+                                    try {
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                      // final featured = await food
+                                      //     .uploadFile(widget.featuredImage);
+                                      final gallery = await food
+                                          .uploadFiles(widget.galleries);
+                                      if (!await food.create(
+                                          auth.user!.uid!,
+                                          selectedId!,
+                                          widget.title,
+                                          widget.about,
+                                          int.parse(widget.amount),
+                                          gallery[0],
+                                          gallery[0],
+                                          gallery)) {
+                                        return;
+                                      } else {
+                                        setState(() {
+                                          loading = true;
+                                        });
+                                        showGeneralDialog(
+                                          barrierLabel: "Barrier",
+                                          barrierDismissible: true,
+                                          barrierColor:
+                                              Colors.black.withOpacity(0.5),
+                                          transitionDuration:
+                                              const Duration(milliseconds: 200),
+                                          context: context,
+                                          pageBuilder: (_, __, ___) {
+                                            return Align(
+                                              alignment: Alignment.center,
+                                              child: Container(
+                                                height: 283,
+                                                width: 293,
+                                                child: SizedBox.expand(
+                                                    child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      height: 75,
+                                                      width: 75,
+                                                      decoration: BoxDecoration(
+                                                        color: Commons
+                                                            .primaryColor
+                                                            .withOpacity(0.05),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(100),
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.check,
+                                                        color: Commons
+                                                            .primaryColor,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Center(
-                                                    child: Text(
-                                                      'Successful',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headline1!
-                                                          .copyWith(
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600),
+                                                    const SizedBox(
+                                                      height: 10,
                                                     ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Center(
-                                                    child: Text(
-                                                      'Your cuisine has been addedd\nsuccessfully',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1!
-                                                          .copyWith(
-                                                              fontSize: 14),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Center(
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        Navigator.pushAndRemoveUntil(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const HomeScreen()),
-                                                            (Route<dynamic>
-                                                                    route) =>
-                                                                false);
-                                                      },
+                                                    Center(
                                                       child: Text(
-                                                        'Return Home',
+                                                        'Successful',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headline1!
+                                                            .copyWith(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Center(
+                                                      child: Text(
+                                                        'Your cuisine has been addedd\nsuccessfully',
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .bodyText1!
                                                             .copyWith(
-                                                                fontSize: 14,
-                                                                color: Commons
-                                                                    .primaryColor),
+                                                                fontSize: 14),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              )),
-                                              margin: const EdgeInsets.only(
-                                                  bottom: 50,
-                                                  left: 12,
-                                                  right: 12),
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .scaffoldBackgroundColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
+                                                    const SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    Center(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.pushAndRemoveUntil(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const HomeScreen()),
+                                                              (Route<dynamic>
+                                                                      route) =>
+                                                                  false);
+                                                        },
+                                                        child: Text(
+                                                          'Return Home',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyText1!
+                                                              .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: Commons
+                                                                      .primaryColor),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 50,
+                                                    left: 12,
+                                                    right: 12),
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .scaffoldBackgroundColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                ),
                                               ),
-                                            ),
-                                          );
-                                        },
-                                        transitionBuilder:
-                                            (_, anim, __, child) {
-                                          return SlideTransition(
-                                            position: Tween(
-                                                    begin: const Offset(0, 1),
-                                                    end: const Offset(0, 0))
-                                                .animate(anim),
-                                            child: child,
-                                          );
-                                        },
-                                      );
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (_, anim, __, child) {
+                                            return SlideTransition(
+                                              position: Tween(
+                                                      begin: const Offset(0, 1),
+                                                      end: const Offset(0, 0))
+                                                  .animate(anim),
+                                              child: child,
+                                            );
+                                          },
+                                        );
+                                      }
+                                    } catch (err) {
+                                      //
+                                      setState(() {
+                                        loading = true;
+                                      });
                                     }
-                                  } catch (err) {
-                                    //
-                                  }
-                                },
-                                elevation: 0,
-                                color: Commons.primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Container(
-                                  width: context.screenWidth(1),
-                                  height: 56,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Save',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(color: Commons.whiteColor),
+                                  },
+                                  elevation: 0,
+                                  color: Commons.primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    width: context.screenWidth(1),
+                                    height: 56,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Save',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(color: Commons.whiteColor),
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
-                        ),
-                      ],
-                    )))
-          ]));
+                            ],
+                          ),
+                        ],
+                      )))
+            ])),
+      );
     });
   }
 }

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/connectivity_controller.dart';
+//import 'package:food_truck_locator/controllers/share_controller.dart';
 import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/ui/auth/register.dart';
@@ -116,7 +116,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       final GoogleSignInAccount? googleUser =
                           await GoogleSignIn().signIn();
 
-                      if (user.searchSocialUserbyEmail(googleUser!.email)) {
+                      if (user.searchSocialUserbyEmail(
+                          googleUser!.email, "email")) {
                         const snackBar = SnackBar(
                             content: Text(
                                 'Email Address has been used by another person'));
@@ -130,17 +131,26 @@ class _LoginScreenState extends State<LoginScreen> {
                           accessToken: googleAuth?.accessToken,
                           idToken: googleAuth?.idToken,
                         );
-
-                        if (!await auth.googleSignIn(credential)) {
-                          final snackBar = SnackBar(content: Text(auth.error!));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
-                        } else {
+                        if (user.searchSocialUserbyEmail(
+                                googleUser.email, "social") &&
+                            await auth.socialSignIn(credential)) {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => const HomeScreen()),
                               (Route<dynamic> route) => false);
+                          return;
+                        } else if (await auth.googleSignIn(credential)) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()),
+                              (Route<dynamic> route) => false);
+                          return;
+                        } else {
+                          final snackBar = SnackBar(content: Text(auth.error!));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          return;
                         }
                       }
                     } catch (err) {
@@ -237,7 +247,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           return;
                         }
 
-                        if (user.searchSocialUserbyEmail(credential.email!)) {
+                        if (user.searchSocialUserbyEmail(
+                            credential.email!, "email")) {
                           const snackBar = SnackBar(
                               content: Text(
                                   'Email Address has been used by another person'));

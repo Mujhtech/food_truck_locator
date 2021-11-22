@@ -50,13 +50,36 @@ class AuthController extends ChangeNotifier {
     }
   }
 
+  Future<bool> socialSignIn(OAuthCredential credential) async {
+    try {
+      loading = true;
+      notifyListeners();
+      final res = await _read(authRepositoryProvider).socialSignIn(credential);
+      final user = await _read(firebaseFirestoreProvider)
+          .user()
+          .doc(res!.user!.uid)
+          .get();
+      _fsUser = UserModel.fromDocument(user.data());
+      _error = '';
+      loading = false;
+      notifyListeners();
+      return true;
+    } on CustomException catch (e) {
+      _error = e.message;
+      loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> googleSignIn(OAuthCredential credential) async {
     try {
       loading = true;
       notifyListeners();
       final res = await _read(authRepositoryProvider).socialSignIn(credential);
       UserModel user = UserModel(
-          fcmToken: await _read(firebaseMessaging).getToken(),
+          //fcmToken: await _read(firebaseMessaging).getToken(),
+          fcmToken: '',
           address: '',
           loginType: 'social',
           email: res!.user!.email,
@@ -89,7 +112,8 @@ class AuthController extends ChangeNotifier {
       notifyListeners();
       final res = await _read(authRepositoryProvider).socialSignIn(credential);
       UserModel user = UserModel(
-          fcmToken: await _read(firebaseMessaging).getToken(),
+          //fcmToken: await _read(firebaseMessaging).getToken(),
+          fcmToken: '',
           address: '',
           loginType: 'social',
           email: res!.user!.email,

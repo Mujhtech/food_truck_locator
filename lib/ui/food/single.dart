@@ -7,9 +7,9 @@ import 'package:food_truck_locator/models/food_model.dart';
 import 'package:food_truck_locator/ui/food/edit.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
-import 'package:food_truck_locator/widgets/modals/order_modal.dart';
+//import 'package:food_truck_locator/widgets/modals/order_modal.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+//import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class FoodSingle extends StatelessWidget {
   final FoodModel item;
@@ -153,42 +153,42 @@ class FoodSingle extends StatelessWidget {
                             ),
                             Column(
                               children: [
-                                MaterialButton(
-                                  onPressed: () =>
-                                      showCupertinoModalBottomSheet(
-                                    elevation: 0,
-                                    expand: true,
-                                    shadow: const BoxShadow(
-                                        color: Colors.transparent),
-                                    backgroundColor: Colors.transparent,
-                                    transitionBackgroundColor:
-                                        Colors.transparent,
-                                    context: context,
-                                    builder: (context) => OrderModal(
-                                      item: item,
-                                    ),
-                                  ),
-                                  elevation: 0,
-                                  color: Commons.primaryColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Container(
-                                    width: context.screenWidth(1),
-                                    height: 53,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Order Now',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(color: Commons.whiteColor),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
+                                // MaterialButton(
+                                //   onPressed: () =>
+                                //       showCupertinoModalBottomSheet(
+                                //     elevation: 0,
+                                //     expand: true,
+                                //     shadow: const BoxShadow(
+                                //         color: Colors.transparent),
+                                //     backgroundColor: Colors.transparent,
+                                //     transitionBackgroundColor:
+                                //         Colors.transparent,
+                                //     context: context,
+                                //     builder: (context) => OrderModal(
+                                //       item: item,
+                                //     ),
+                                //   ),
+                                //   elevation: 0,
+                                //   color: Commons.primaryColor,
+                                //   shape: RoundedRectangleBorder(
+                                //     borderRadius: BorderRadius.circular(10),
+                                //   ),
+                                //   child: Container(
+                                //     width: context.screenWidth(1),
+                                //     height: 53,
+                                //     alignment: Alignment.center,
+                                //     child: Text(
+                                //       'Order Now',
+                                //       style: Theme.of(context)
+                                //           .textTheme
+                                //           .bodyText1!
+                                //           .copyWith(color: Commons.whiteColor),
+                                //     ),
+                                //   ),
+                                // ),
+                                // const SizedBox(
+                                //   height: 10,
+                                // ),
                                 MaterialButton(
                                   onPressed: () async {
                                     Navigator.pushAndRemoveUntil(
