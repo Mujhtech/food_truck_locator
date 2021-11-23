@@ -539,7 +539,7 @@ class _FoodEditState extends State<FoodEdit> {
                                                         context,
                                                         MaterialPageRoute(
                                                             builder: (context) =>
-                                                                const HomeScreen()),
+                                                                const HomeScreen(index: 1,)),
                                                         (Route<dynamic>
                                                                 route) =>
                                                             false);

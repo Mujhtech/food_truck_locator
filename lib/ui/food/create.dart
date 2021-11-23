@@ -151,7 +151,7 @@ class _FoodCreateState extends State<FoodCreate> {
                                 //   //print(err.toString());
                                 // }
                               },
-                              child: galleries != null && galleries!.isEmpty
+                              child: galleries != null && galleries!.isNotEmpty
                                   ? Image.file(
                                       galleries![0],
                                       width: 200,
@@ -714,7 +714,7 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
                                                               MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
-                                                                          const HomeScreen()),
+                                                                          const HomeScreen(index: 1,)),
                                                               (Route<dynamic>
                                                                       route) =>
                                                                   false);

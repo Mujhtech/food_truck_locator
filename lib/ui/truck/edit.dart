@@ -218,7 +218,7 @@ class _TruckEditState extends State<TruckEdit> {
                                       // }
                                     },
                                     child: galleries != null &&
-                                            galleries!.isEmpty
+                                            galleries!.isNotEmpty
                                         ? Image.file(
                                             galleries![0],
                                             width: 200,
@@ -649,7 +649,7 @@ class _TruckEditState extends State<TruckEdit> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
-                                                            const HomeScreen()),
+                                                            const HomeScreen(index: 0,)),
                                                     (Route<dynamic> route) =>
                                                         false);
                                               },

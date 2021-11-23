@@ -137,14 +137,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()),
+                                  builder: (context) => const HomeScreen(
+                                        index: 0,
+                                      )),
                               (Route<dynamic> route) => false);
                           return;
                         } else if (await auth.googleSignIn(credential)) {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()),
+                                  builder: (context) => const HomeScreen(
+                                        index: 0,
+                                      )),
                               (Route<dynamic> route) => false);
                           return;
                         } else {
@@ -264,7 +268,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()),
+                                  builder: (context) => const HomeScreen(
+                                        index: 0,
+                                      )),
                               (Route<dynamic> route) => false);
                         }
                       } catch (err) {
@@ -480,7 +486,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()),
+                                  builder: (context) => const HomeScreen(
+                                        index: 0,
+                                      )),
                               (Route<dynamic> route) => false);
                         },
                         elevation: 0,
@@ -509,7 +517,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()),
+                                  builder: (context) => const HomeScreen(
+                                        index: 0,
+                                      )),
                               (Route<dynamic> route) => false);
                         },
                         elevation: 0,

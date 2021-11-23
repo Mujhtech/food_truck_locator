@@ -13,7 +13,8 @@ import 'package:food_truck_locator/utils/constant.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final int index;
+  const HomeScreen({Key? key, required this.index}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();

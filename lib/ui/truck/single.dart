@@ -364,7 +364,7 @@ class _TruckSingleState extends State<TruckSingle>
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const HomeScreen()),
+                                                const HomeScreen(index: 0,)),
                                         (Route<dynamic> route) => false);
                                   },
                                   elevation: 0,

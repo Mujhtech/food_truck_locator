@@ -18,7 +18,7 @@ class AuthHomeScreen extends StatelessWidget {
           case Status.authenticating:
             return const WelcomeScreen();
           case Status.authenticated:
-            return const HomeScreen();
+            return const HomeScreen(index: 0,);
           case Status.uninitialized:
           default:
             return const WelcomeScreen();

@@ -419,7 +419,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const HomeScreen()),
+                                                  const HomeScreen(index: 0,)),
                                           (Route<dynamic> route) => false);
                                     },
                                     child: Text(

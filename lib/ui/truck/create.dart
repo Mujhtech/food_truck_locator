@@ -202,7 +202,7 @@ class _TruckCreateState extends State<TruckCreate> {
                                     //   //print(err.toString());
                                     // }
                                   },
-                                  child: galleries != null && galleries!.isEmpty
+                                  child: galleries != null && galleries!.isNotEmpty
                                       ? Image.file(
                                           galleries![0],
                                           width: 200,
@@ -629,7 +629,7 @@ class _TruckCreateState extends State<TruckCreate> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
-                                                            const HomeScreen()),
+                                                            const HomeScreen(index: 0,)),
                                                     (Route<dynamic> route) =>
                                                         false);
                                               },

@@ -277,7 +277,7 @@ class TruckConfirmPayment extends StatelessWidget {
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const HomeScreen()),
+                                builder: (context) => const HomeScreen(index: 0,)),
                             (Route<dynamic> route) => false);
                       },
                       elevation: 0,
