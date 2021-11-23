@@ -375,4 +375,20 @@ class AuthController extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> forgotPassword(String email) async {
+    try {
+      loading = true;
+      notifyListeners();
+      await _read(firebaseAuthProvider).sendPasswordResetEmail(email: email);
+      loading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      loading = false;
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
 }

@@ -4,18 +4,19 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+//import 'package:flutter_svg/flutter_svg.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
 import 'package:food_truck_locator/controllers/connectivity_controller.dart';
 //import 'package:food_truck_locator/controllers/share_controller.dart';
 import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
+import 'package:food_truck_locator/ui/auth/forgot.dart';
 import 'package:food_truck_locator/ui/auth/register.dart';
 import 'package:food_truck_locator/ui/home.dart';
 import 'package:food_truck_locator/utils/constant.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+//import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -98,126 +99,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 40,
                 ),
-                MaterialButton(
-                  onPressed: () async {
-                    if (auth.loading) {
-                      return;
-                    }
-                    if (!connect.connectivityStatus) {
-                      const snackBar =
-                          SnackBar(content: Text('No internet connection'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    }
-
-                    try {
-                      final GoogleSignInAccount? googleUser =
-                          await GoogleSignIn().signIn();
-
-                      if (user.searchSocialUserbyEmail(
-                          googleUser!.email, "email")) {
-                        const snackBar = SnackBar(
-                            content: Text(
-                                'Email Address has been used by another person'));
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        return;
-                      } else {
-                        final GoogleSignInAuthentication? googleAuth =
-                            await googleUser.authentication;
-
-                        final credential = GoogleAuthProvider.credential(
-                          accessToken: googleAuth?.accessToken,
-                          idToken: googleAuth?.idToken,
-                        );
-                        if (user.searchSocialUserbyEmail(
-                                googleUser.email, "social") &&
-                            await auth.socialSignIn(credential)) {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(
-                                        index: 0,
-                                      )),
-                              (Route<dynamic> route) => false);
-                          return;
-                        } else if (await auth.googleSignIn(credential)) {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(
-                                        index: 0,
-                                      )),
-                              (Route<dynamic> route) => false);
-                          return;
-                        } else {
-                          final snackBar = SnackBar(content: Text(auth.error!));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
-                        }
-                      }
-                    } catch (err) {
-                      //print(err.toString());
-                    }
-                  },
-                  elevation: 0,
-                  color: Commons.whiteColor,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: const BorderSide(
-                          color: Commons.primaryColor, width: 1)),
-                  child: SizedBox(
-                    width: context.screenWidth(1),
-                    height: 53,
-                    child: Wrap(
-                      direction: Axis.vertical,
-                      children: [
-                        Container(
-                          height: 50,
-                          width: 80,
-                          decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(0),
-                                bottomLeft: Radius.circular(0),
-                              )),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/Google.png',
-                              width: 30,
-                              height: 30,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 70,
-                          width: context.screenWidth(0.675),
-                          decoration: const BoxDecoration(
-                              color: Commons.primaryColor,
-                              borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                              )),
-                          child: Center(
-                            child: Text(
-                              'Continue with Google',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(color: Commons.whiteColor),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (Platform.isIOS)
+                if (Platform.isAndroid)
                   MaterialButton(
                     onPressed: () async {
-                      final rawNonce = generateNonce();
-                      final nonce = sha256ofString(rawNonce);
                       if (auth.loading) {
                         return;
                       }
@@ -227,54 +113,60 @@ class _LoginScreenState extends State<LoginScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         return;
                       }
+
                       try {
-                        final credential =
-                            await SignInWithApple.getAppleIDCredential(
-                          scopes: [
-                            AppleIDAuthorizationScopes.email,
-                            AppleIDAuthorizationScopes.fullName,
-                          ],
-                          nonce: nonce,
-                        );
-
-                        final oauthCredential =
-                            OAuthProvider("apple.com").credential(
-                          idToken: credential.identityToken,
-                          rawNonce: rawNonce,
-                        );
-
-                        if (credential.email == null) {
-                          const snackBar = SnackBar(
-                              content:
-                                  Text('Enable share with email to continue'));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
-                        }
-
+                        final GoogleSignInAccount? googleUser =
+                            await GoogleSignIn().signIn();
+                        //print(0);
                         if (user.searchSocialUserbyEmail(
-                            credential.email!, "email")) {
+                            googleUser!.email, "email")) {
                           const snackBar = SnackBar(
                               content: Text(
                                   'Email Address has been used by another person'));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           return;
-                        }
-
-                        if (!await auth.appleSignIn(oauthCredential)) {
-                          final snackBar = SnackBar(content: Text(auth.error!));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
                         } else {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(
-                                        index: 0,
-                                      )),
-                              (Route<dynamic> route) => false);
+                          final GoogleSignInAuthentication? googleAuth =
+                              await googleUser.authentication;
+
+                          final credential = GoogleAuthProvider.credential(
+                            accessToken: googleAuth?.accessToken,
+                            idToken: googleAuth?.idToken,
+                          );
+                          //print(0);
+                          if (user.searchSocialUserbyEmail(
+                                  googleUser.email, "social") &&
+                              await auth.socialSignIn(credential)) {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomeScreen(
+                                          index: 0,
+                                        )),
+                                (Route<dynamic> route) => false);
+                            return;
+                          } else if (await auth.googleSignIn(credential)) {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomeScreen(
+                                          index: 0,
+                                        )),
+                                (Route<dynamic> route) => false);
+                            return;
+                          } else {
+                            final snackBar =
+                                SnackBar(content: Text(auth.error!));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                            return;
+                          }
                         }
                       } catch (err) {
                         //print(err.toString());
+                        const snackBar =
+                            SnackBar(content: Text('Sign in failed'));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       }
                     },
                     elevation: 0,
@@ -299,11 +191,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   bottomLeft: Radius.circular(0),
                                 )),
                             child: Center(
-                              child: SvgPicture.asset(
-                                'assets/images/Apple.svg',
+                              child: Image.asset(
+                                'assets/images/Google.png',
                                 width: 30,
                                 height: 30,
-                                color: const Color(0xFF656565),
                               ),
                             ),
                           ),
@@ -318,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 )),
                             child: Center(
                               child: Text(
-                                'Continue with Apple',
+                                'Continue with Google',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText1!
@@ -330,6 +221,123 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                // if (Platform.isIOS)
+                //   MaterialButton(
+                //     onPressed: () async {
+                //       final rawNonce = generateNonce();
+                //       final nonce = sha256ofString(rawNonce);
+                //       if (auth.loading) {
+                //         return;
+                //       }
+                //       if (!connect.connectivityStatus) {
+                //         const snackBar =
+                //             SnackBar(content: Text('No internet connection'));
+                //         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                //         return;
+                //       }
+                //       try {
+                //         final credential =
+                //             await SignInWithApple.getAppleIDCredential(
+                //           scopes: [
+                //             AppleIDAuthorizationScopes.email,
+                //             AppleIDAuthorizationScopes.fullName,
+                //           ],
+                //           nonce: nonce,
+                //         );
+
+                //         final oauthCredential =
+                //             OAuthProvider("apple.com").credential(
+                //           idToken: credential.identityToken,
+                //           rawNonce: rawNonce,
+                //         );
+
+                //         if (credential.email == null) {
+                //           const snackBar = SnackBar(
+                //               content:
+                //                   Text('Enable share with email to continue'));
+                //           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                //           return;
+                //         }
+
+                //         if (user.searchSocialUserbyEmail(
+                //             credential.email!, "email")) {
+                //           const snackBar = SnackBar(
+                //               content: Text(
+                //                   'Email Address has been used by another person'));
+                //           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                //           return;
+                //         }
+
+                //         if (!await auth.appleSignIn(oauthCredential)) {
+                //           final snackBar = SnackBar(content: Text(auth.error!));
+                //           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                //           return;
+                //         } else {
+                //           Navigator.pushAndRemoveUntil(
+                //               context,
+                //               MaterialPageRoute(
+                //                   builder: (context) => const HomeScreen(
+                //                         index: 0,
+                //                       )),
+                //               (Route<dynamic> route) => false);
+                //         }
+                //       } catch (err) {
+                //         //print(err.toString());
+                //       }
+                //     },
+                //     elevation: 0,
+                //     color: Commons.whiteColor,
+                //     shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(10),
+                //         side: const BorderSide(
+                //             color: Commons.primaryColor, width: 1)),
+                //     child: SizedBox(
+                //       width: context.screenWidth(1),
+                //       height: 53,
+                //       child: Wrap(
+                //         direction: Axis.vertical,
+                //         children: [
+                //           Container(
+                //             height: 50,
+                //             width: 80,
+                //             decoration: const BoxDecoration(
+                //                 color: Colors.white,
+                //                 borderRadius: BorderRadius.only(
+                //                   topLeft: Radius.circular(0),
+                //                   bottomLeft: Radius.circular(0),
+                //                 )),
+                //             child: Center(
+                //               child: SvgPicture.asset(
+                //                 'assets/images/Apple.svg',
+                //                 width: 30,
+                //                 height: 30,
+                //                 color: const Color(0xFF656565),
+                //               ),
+                //             ),
+                //           ),
+                //           Container(
+                //             height: 70,
+                //             width: context.screenWidth(0.675),
+                //             decoration: const BoxDecoration(
+                //                 color: Commons.primaryColor,
+                //                 borderRadius: BorderRadius.only(
+                //                   bottomRight: Radius.circular(10),
+                //                   topRight: Radius.circular(10),
+                //                 )),
+                //             child: Center(
+                //               child: Text(
+                //                 'Continue with Apple',
+                //                 style: Theme.of(context)
+                //                     .textTheme
+                //                     .bodyText1!
+                //                     .copyWith(color: Commons.whiteColor),
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -442,6 +450,31 @@ class _LoginScreenState extends State<LoginScreen> {
                           autocorrect: false,
                           autofocus: false,
                           obscureText: true,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: InkWell(
+                            onTap: () {
+                              if (auth.loading) {
+                                return;
+                              }
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ForgotPasswordScreen()));
+                            },
+                            child: Text(
+                              'Forgot Password ?',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(color: Commons.primaryColor),
+                            ),
+                          ),
                         ),
                       ],
                     )),

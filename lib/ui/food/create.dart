@@ -525,7 +525,9 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
                           const SizedBox(
                             height: 10,
                           ),
-                          if (truck.trucks!.isNotEmpty)
+                          if (truck
+                              .filterTruckByUser(auth.user!.uid!)
+                              .isNotEmpty)
                             Flexible(
                               fit: FlexFit.loose,
                               child: GridView.builder(
@@ -544,22 +546,31 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
                                     return GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            selectedId =
-                                                truck.trucks![index].id;
+                                            selectedId = truck
+                                                .filterTruckByUser(
+                                                    auth.user!.uid!)[index]
+                                                .id;
                                           });
                                         },
                                         child: Stack(
                                           children: [
                                             TruckCard(
-                                              title:
-                                                  truck.trucks![index].title!,
+                                              title: truck
+                                                  .filterTruckByUser(
+                                                      auth.user!.uid!)[index]
+                                                  .title!,
                                               bannerImage: truck
-                                                  .trucks![index].bannerImage!,
+                                                  .filterTruckByUser(
+                                                      auth.user!.uid!)[index]
+                                                  .bannerImage!,
                                               width: 1,
                                             ),
                                             if (selectedId != null &&
                                                 selectedId ==
-                                                    truck.trucks![index].id!)
+                                                    truck
+                                                        .filterTruckByUser(auth
+                                                            .user!.uid!)[index]
+                                                        .id!)
                                               Center(
                                                 child: Container(
                                                     height: 30,
@@ -709,15 +720,18 @@ class _SelectTruckModalState extends State<SelectTruckModal> {
                                                     Center(
                                                       child: GestureDetector(
                                                         onTap: () {
-                                                          Navigator.pushAndRemoveUntil(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          const HomeScreen(index: 1,)),
-                                                              (Route<dynamic>
-                                                                      route) =>
-                                                                  false);
+                                                          Navigator
+                                                              .pushAndRemoveUntil(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              const HomeScreen(
+                                                                                index: 1,
+                                                                              )),
+                                                                  (Route<dynamic>
+                                                                          route) =>
+                                                                      false);
                                                         },
                                                         child: Text(
                                                           'Return Home',
