@@ -63,7 +63,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 ),
               ),
               SizedBox(
-                height: context.screenHeight(0.5),
+                height: context.screenHeight(0.6),
                 child: PageView(
                   controller: controller,
                   onPageChanged: (index) {
@@ -77,8 +77,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       children: [
                         Image.asset(
                           'assets/images/Onboard-1.png',
-                          width: 300,
-                          height: 300,
+                          width: 280,
+                          height: 280,
                         ),
                         Text(
                           'Locate the best Food Trucks near you',
@@ -87,7 +87,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                               .textTheme
                               .headline1!
                               .copyWith(
-                                  fontWeight: FontWeight.w900, fontSize: 32),
+                                  fontWeight: FontWeight.w900, fontSize: 28),
                         )
                       ],
                     ),
@@ -96,8 +96,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       children: [
                         Image.asset(
                           'assets/images/Onboard-2.png',
-                          width: 300,
-                          height: 300,
+                          width: 280,
+                          height: 280,
                         ),
                         Text(
                           'Get food and other valuables',
@@ -106,7 +106,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                               .textTheme
                               .headline1!
                               .copyWith(
-                                  fontWeight: FontWeight.w900, fontSize: 32),
+                                  fontWeight: FontWeight.w900, fontSize: 28),
                         )
                       ],
                     ),
@@ -115,8 +115,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       children: [
                         Image.asset(
                           'assets/images/Onboard-3.png',
-                          width: 300,
-                          height: 300,
+                          width: 280,
+                          height: 280,
                         ),
                         Text(
                           'Deliver with best Food Trucks near you',
@@ -125,7 +125,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                               .textTheme
                               .headline1!
                               .copyWith(
-                                  fontWeight: FontWeight.w900, fontSize: 32),
+                                  fontWeight: FontWeight.w900, fontSize: 28),
                         )
                       ],
                     )
@@ -133,7 +133,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 for (int i = 0; i < 3; i++)
@@ -142,7 +142,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       : _buildPageIndicator(false),
               ]),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               MaterialButton(
                 onPressed: () async {
