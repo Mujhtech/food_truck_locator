@@ -169,7 +169,7 @@ class AuthController extends ChangeNotifier {
       notifyListeners();
       final res = await _read(authRepositoryProvider).signUp(email, password);
       UserModel user = UserModel(
-          fcmToken: await _read(firebaseMessaging).getToken(),
+          fcmToken: '',
           address: '',
           loginType: 'email',
           email: email,

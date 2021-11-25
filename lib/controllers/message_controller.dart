@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
 import 'package:food_truck_locator/models/message_model.dart';
 import 'package:food_truck_locator/providers/firebase_provider.dart';
@@ -66,12 +65,6 @@ class MessageController extends ChangeNotifier {
           foodOwnerId: foodOwnerId,
           userId: userId,
           createdAt: DateTime.now());
-      final user = _read(userControllerProvider).filterUserbyId(userId);
-      final owner = _read(userControllerProvider).filterUserbyId(foodOwnerId);
-      // await backendServices.sendNotification(
-      //     user.fcmToken!, 'Order', 'You just order ${data.item!.title!}');
-      await backendServices.sendNotification(
-          owner.fcmToken!, 'Order', 'New message from ${user.fullName}');
       await _read(messageRepositoryProvider).create(id: id, item: item);
       loading = false;
       retrieve();

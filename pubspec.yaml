@@ -76,9 +76,6 @@ dependencies:
 
   flutter_stripe: ^2.0.2
 
-  flutter_local_notifications: ^8.2.0
-  firebase_messaging: ^10.0.7
-
   rating_dialog: ^2.0.3
   flutter_rating_bar: ^4.0.0
 

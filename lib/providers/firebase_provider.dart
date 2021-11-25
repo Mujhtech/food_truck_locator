@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,6 +15,3 @@ final firebaseStorageProvider =
 
 final firebaseRemoteConfig =
     Provider<RemoteConfig>((ref) => RemoteConfig.instance);
-
-final firebaseMessaging =
-    Provider<FirebaseMessaging>((ref) => FirebaseMessaging.instance);

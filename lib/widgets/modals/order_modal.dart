@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:food_truck_locator/controllers/cart_controller.dart';
-import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/screen_extension.dart';
 import 'package:food_truck_locator/models/food_model.dart';
 import 'package:food_truck_locator/services/backend_service.dart';
@@ -27,7 +26,6 @@ class _OrderModalState extends State<OrderModal> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
       final share = watch(cartController);
-      final user = watch(userControllerProvider);
       return Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
@@ -237,10 +235,7 @@ class _OrderModalState extends State<OrderModal> {
                             specialRequest.text.trim().isNotEmpty
                                 ? int.parse(specialRequest.text.trim())
                                 : cart);
-                        await backendServices.sendNotification(
-                            user.token!,
-                            'Cart',
-                            'You just added $cart ${widget.item.title}s to cart');
+                        
                         showGeneralDialog(
                           barrierLabel: "Barrier",
                           barrierDismissible: true,

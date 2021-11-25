@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/models/user_model.dart';
-import 'package:food_truck_locator/providers/firebase_provider.dart';
 import 'package:food_truck_locator/repositories/custom_exception.dart';
 import 'package:food_truck_locator/repositories/user_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -47,9 +46,7 @@ class UserController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
-      final fcmtoken = await _read(firebaseMessaging).getToken();
       final items = await _read(userRepositoryProvider).get();
-      token = fcmtoken;
       _users = items;
       loading = false;
       notifyListeners();

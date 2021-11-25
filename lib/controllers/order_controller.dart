@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:food_truck_locator/controllers/auth_controller.dart';
-import 'package:food_truck_locator/controllers/user_controller.dart';
 import 'package:food_truck_locator/extensions/firebase_extension.dart';
 import 'package:food_truck_locator/models/cart_model.dart';
 import 'package:food_truck_locator/models/order_model.dart';
@@ -82,13 +81,7 @@ class OrderController extends ChangeNotifier {
             rating: 0,
             comment: '',
             status: 'Pending');
-        final user = _read(userControllerProvider).filterUserbyId(_userId!);
-        final owner =
-            _read(userControllerProvider).filterUserbyId(data.item!.userId!);
-        await backendServices.sendNotification(
-            user.fcmToken!, 'Order', 'You just order ${data.item!.title!}');
-        await backendServices.sendNotification(owner.fcmToken!, 'Order',
-            '${user.fullName} just ordered ${data.item!.title!}');
+
         await _read(orderRepositoryProvider).create(id: id, item: item);
         myorder.add(item);
       }
@@ -109,20 +102,6 @@ class OrderController extends ChangeNotifier {
     try {
       loading = true;
       notifyListeners();
-      final user = _read(userControllerProvider).filterUserbyId(userId);
-      // final owner =
-      //     _read(userControllerProvider).filterUserbyId(data.item!.userId!);
-      if (status == "Canceled") {
-        await backendServices.sendNotification(
-            user.fcmToken!, 'Order', 'Your order has been canceled');
-      }
-      if (status == "Completed") {
-        await backendServices.sendNotification(
-            user.fcmToken!, 'Order', 'Your order has been delivered');
-      }
-
-      // await backendServices.sendNotification(owner.fcmToken!, 'Order',
-      //     '${user.fullName} just ordered ${data.item!.title!}');
       await _read(orderRepositoryProvider).update(id: id, status: status);
       loading = false;
       retrieve();

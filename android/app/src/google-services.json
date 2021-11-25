@@ -1,41 +1,34 @@
 {
   "project_info": {
-    "project_number": "638360667643",
-    "project_id": "foodtruck-f41a8",
-    "storage_bucket": "foodtruck-f41a8.appspot.com"
+    "project_number": "102380619609",
+    "project_id": "food-truck-locator-32f11",
+    "storage_bucket": "food-truck-locator-32f11.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:638360667643:android:e0b167fdc2e0cc0308f75e",
+        "mobilesdk_app_id": "1:102380619609:android:291a6d8e0ca32b48e5ee48",
         "android_client_info": {
           "package_name": "com.mujhtech.food_truck_locator"
         }
       },
       "oauth_client": [
         {
-          "client_id": "638360667643-mccctubqlp0gdb294n247o3vt794mhi9.apps.googleusercontent.com",
+          "client_id": "102380619609-n83cu6g5ktjcc6f0glu9ts30mbk0j3tv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB8Uu5N4aAaYR_b-VqslR40IPmLLJAswqo"
+          "current_key": "AIzaSyDlsO3un38t0eXeJUzxJwpZwNX-Xjm2ek8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "638360667643-mccctubqlp0gdb294n247o3vt794mhi9.apps.googleusercontent.com",
+              "client_id": "102380619609-n83cu6g5ktjcc6f0glu9ts30mbk0j3tv.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "638360667643-41ss7sg2j30i02744btgrpup1r1mqd70.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.mujhtech.foodTruckLocator"
-              }
             }
           ]
         }
